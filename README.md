@@ -42,4 +42,4 @@ Build the web bundle: `cd client && npm install && node build.mjs`. Build Androi
 
 Sample photos: Wikimedia Commons (CC0 and CC BY-SA 3.0), see `web/samples/CREDITS.txt`.
 
-Conuco gives general guidance, not professional agronomic advice. License: Apache-2.0.
+Conuco gives general guidance, not professional agronomic advice. License: MIT (sample photos keep their own licences, see web/samples/CREDITS.txt).

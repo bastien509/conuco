@@ -15,7 +15,7 @@ Web (Chrome) and Android
 - Live app: https://petiht.com/conuco
 - Android APK: https://petiht.com/conuco/download/conuco.apk
 - Demo login (optional): `demo@conuco-farm.web.app` / `ConucoDemo509` (or "Start without an account")
-- Code (Apache-2.0): **[CHECK: GitHub link]**
+- Code (MIT): https://github.com/bastien509/conuco
 - Video: **[CHECK: YouTube link]**
 
 ---
