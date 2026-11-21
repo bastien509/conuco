@@ -1,0 +1,16 @@
+{
+  "name": "Conuco · field assistant",
+  "short_name": "Conuco",
+  "description": "Crop doctor with Gemini Nano on your device, weather decisions, market prices and an offline farm log.",
+  "start_url": "app.html#today",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f6f3f",
+  "lang": "es",
+  "icons": [
+    { "src": "assets/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -1,0 +1,6 @@
+[
+  { "file": "sigatoka.jpg", "thumb": "sigatoka-t.jpg", "crop": "banana", "en": "Banana leaf", "es": "Hoja de guineo",
+    "credit": "\"Banana- Black leaf streak (Black Sigatoka)\" by Plant pests and diseases, CC0, via Wikimedia Commons" },
+  { "file": "coffee-rust.jpg", "thumb": "coffee-rust-t.jpg", "crop": "coffee", "en": "Coffee leaf", "es": "Hoja de café",
+    "credit": "\"Hemileia vastatrix - coffee leaf rust\" by Smartse, CC BY-SA 3.0, via Wikimedia Commons" }
+]

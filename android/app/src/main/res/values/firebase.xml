@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Firebase project conuco-farm: public identifiers, the same values google-services.json would generate. -->
+<resources>
+    <string name="google_app_id" translatable="false">1:42753514920:android:73d6993c2806e855ed519d</string>
+    <string name="google_api_key" translatable="false">AIzaSyBGmRvZH6VNltdZNH5QKatbnnqOiFfBDWM</string>
+    <string name="gcm_defaultSenderId" translatable="false">42753514920</string>
+    <string name="project_id" translatable="false">conuco-farm</string>
+    <string name="google_storage_bucket" translatable="false">conuco-farm.firebasestorage.app</string>
+</resources>

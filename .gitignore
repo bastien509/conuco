@@ -1,0 +1,13 @@
+node_modules/
+web/download/
+*.apk
+*.jks
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+.DS_Store
+*.log
+video/*.mp4
+.firebase/
+client/tools/*.env

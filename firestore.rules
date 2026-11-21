@@ -1,0 +1,100 @@
+rules_version = '2';
+// Conuco security rules.
+// - users/{uid}/**: private farm data, only its owner can read or write it.
+// - prices, outbreaks: shared community data. Any signed-in user can read; a user can only add rows
+//   under their own uid, with validated fields, a server timestamp and a coarse 0.1° cell. No edits.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function str(v, max) { return v is string && v.size() <= max; }
+    function num(v, lo, hi) { return (v is int || v is float) && v >= lo && v <= hi; }
+    function day(v) { return v is string && v.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'); }
+    function cell(v) { return v is string && v.matches('^-?[0-9]{1,2}[.][0-9]_-?[0-9]{1,3}[.][0-9]$'); }
+    function cropKey(v) { return v is string && v.matches('^[a-z_]{2,20}$'); }
+    function recent(v) { return day(v); }
+
+    match /users/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['name', 'lang', 'country', 'place', 'lat', 'lng', 'crops', 'areaUnit', 'shareOutbreaks', 'updatedAt'])
+        && str(request.resource.data.name, 40)
+        && request.resource.data.lang in ['en', 'es']
+        && str(request.resource.data.country, 2)
+        && str(request.resource.data.place, 60)
+        && num(request.resource.data.lat, -90, 90)
+        && num(request.resource.data.lng, -180, 180)
+        && request.resource.data.crops is list && request.resource.data.crops.size() <= 12
+        && request.resource.data.areaUnit in ['tarea', 'ha', 'acre', 'm2']
+        && request.resource.data.shareOutbreaks is bool
+        && request.resource.data.updatedAt == request.time;
+
+      match /plots/{id} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['name', 'crop', 'area', 'planted', 'createdAt'])
+          && str(request.resource.data.name, 40) && cropKey(request.resource.data.crop)
+          && num(request.resource.data.area, 0, 10000000) && str(request.resource.data.planted, 10);
+      }
+      match /logs/{id} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['plotId', 'kind', 'note', 'qty', 'unit', 'money', 'date', 'via', 'createdAt'])
+          && str(request.resource.data.plotId, 40)
+          && request.resource.data.kind in ['plant', 'water', 'fertilize', 'spray', 'scout', 'weed', 'harvest', 'sell', 'other']
+          && str(request.resource.data.note, 300) && num(request.resource.data.qty, 0, 10000000) && str(request.resource.data.unit, 12)
+          && num(request.resource.data.money, 0, 1000000000) && day(request.resource.data.date)
+          && request.resource.data.via in ['voice', 'text', 'doctor', 'weather'];
+      }
+      match /diagnoses/{id} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['crop', 'problem', 'problemKey', 'category', 'confidence', 'severity', 'source', 'secondOpinion', 'actions', 'plotId', 'day', 'createdAt'])
+          && str(request.resource.data.crop, 20) && str(request.resource.data.problem, 80) && str(request.resource.data.problemKey, 30)
+          && request.resource.data.category in ['fungus', 'bacteria', 'virus', 'pest', 'nutrient', 'water', 'healthy', 'unknown']
+          && num(request.resource.data.confidence, 0, 1) && request.resource.data.severity in ['low', 'medium', 'high']
+          && request.resource.data.source in ['on_device', 'in_cloud']
+          && request.resource.data.secondOpinion in ['none', 'agree', 'disagree', 'cloud_only']
+          && request.resource.data.actions is list && request.resource.data.actions.size() <= 4
+          && str(request.resource.data.plotId, 40) && day(request.resource.data.day);
+      }
+      match /tasks/{id} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['code', 'text', 'day', 'done', 'from', 'updatedAt'])
+          && str(request.resource.data.code, 20) && str(request.resource.data.text, 160) && day(request.resource.data.day)
+          && request.resource.data.done is bool && request.resource.data.from in ['weather', 'doctor', 'user']
+          && request.resource.data.updatedAt == request.time;
+      }
+    }
+
+    match /prices/{id} {
+      allow read: if signedIn();
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid', 'crop', 'unit', 'price', 'currency', 'market', 'country', 'cell', 'day', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && cropKey(request.resource.data.crop)
+        && request.resource.data.unit in ['lb', 'kg', 'quintal', 'unit', 'bunch', 'sack', 'dozen', 'box']
+        && num(request.resource.data.price, 0.01, 10000000)
+        && request.resource.data.currency is string && request.resource.data.currency.matches('^[A-Z]{3}$')
+        && str(request.resource.data.market, 40) && str(request.resource.data.country, 2)
+        && cell(request.resource.data.cell) && recent(request.resource.data.day)
+        && request.resource.data.createdAt == request.time;
+    }
+
+    match /outbreaks/{id} {
+      allow read: if signedIn();
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid', 'crop', 'problemKey', 'category', 'cell', 'lat', 'lng', 'country', 'day', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && cropKey(request.resource.data.crop) && str(request.resource.data.problemKey, 30)
+        && request.resource.data.category in ['fungus', 'bacteria', 'virus', 'pest', 'nutrient', 'water', 'unknown']
+        && cell(request.resource.data.cell)
+        && num(request.resource.data.lat, -90, 90) && num(request.resource.data.lng, -180, 180)
+        && str(request.resource.data.country, 2) && recent(request.resource.data.day)
+        && request.resource.data.createdAt == request.time;
+    }
+  }
+}

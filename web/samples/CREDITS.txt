@@ -1,0 +1,7 @@
+Sample photos used by the Conuco crop doctor (resized to 768 px, metadata removed).
+
+sigatoka.jpg — "Banana- Black leaf streak (Black Sigatoka).jpg" by Plant pests and diseases. CC0 1.0.
+  https://commons.wikimedia.org/wiki/File:Banana-_Black_leaf_streak_(Black_Sigatoka).jpg
+coffee-rust.jpg — "Hemileia vastatrix - coffee leaf rust.jpg" by Smartse. CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/).
+  https://commons.wikimedia.org/wiki/File:Hemileia_vastatrix_-_coffee_leaf_rust.jpg
+  Changes: resized. The resized copy is shared under the same licence.

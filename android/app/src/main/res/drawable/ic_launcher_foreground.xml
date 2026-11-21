@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sprout over a ploughed plot, with the sun. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#F5C518" android:pathData="M64,40a6.5,6.5 0,1 1,13 0a6.5,6.5 0,1 1,-13 0" />
+    <path android:fillColor="#6B4A2B" android:pathData="M28,70c10,-5 42,-5 52,0v8h-52z" />
+    <path android:strokeColor="#E9F7EC" android:strokeWidth="3.4" android:strokeLineCap="round" android:pathData="M54,70V52" />
+    <path android:fillColor="#8FD19E" android:pathData="M54,58c-1,-8 -7,-12 -15,-11c0,8 6,12 15,11z" />
+    <path android:fillColor="#C6EFCF" android:pathData="M54,54c1,-9 8,-13 17,-12c0,9 -7,13 -17,12z" />
+</vector>

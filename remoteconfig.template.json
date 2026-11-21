@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "conuco_cloud_model": { "defaultValue": { "value": "gemini-3.5-flash-lite" }, "description": "Cloud Gemini model used when Conuco falls back to the cloud", "valueType": "STRING" },
+    "conuco_device_languages_web": { "defaultValue": { "value": "en,es" }, "description": "Languages Gemini Nano answers in on the web", "valueType": "STRING" },
+    "conuco_device_languages_android": { "defaultValue": { "value": "en" }, "description": "Languages Gemini Nano answers in on Android", "valueType": "STRING" },
+    "conuco_confidence_floor": { "defaultValue": { "value": "0.65" }, "description": "Below this on-device confidence, Conuco suggests a cloud second opinion", "valueType": "NUMBER" },
+    "conuco_cloud_photos_allowed": { "defaultValue": { "value": "true" }, "description": "Kill switch: allow plant photos to go to the cloud (with consent)", "valueType": "BOOLEAN" },
+    "conuco_grounding_enabled": { "defaultValue": { "value": "true" }, "description": "Allow fresh answers with Google Search grounding", "valueType": "BOOLEAN" },
+    "conuco_outbreak_radius_km": { "defaultValue": { "value": "30" }, "description": "Radius for outbreak alerts", "valueType": "NUMBER" },
+    "conuco_outbreak_alert_min": { "defaultValue": { "value": "2" }, "description": "Reports needed before an outbreak alert shows", "valueType": "NUMBER" },
+    "conuco_price_window_days": { "defaultValue": { "value": "14" }, "description": "Days of price reports in the market median", "valueType": "NUMBER" },
+    "conuco_spray_max_wind_kmh": { "defaultValue": { "value": "15" }, "description": "Maximum wind for a safe spray window", "valueType": "NUMBER" }
+  }
+}

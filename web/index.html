@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conuco · the field assistant that works without signal</title>
+<meta name="description" content="Conuco diagnoses crop problems with Gemini Nano on the farmer's own phone or laptop, turns the weather into field decisions, shares prices and outbreak warnings, and keeps working offline. Built with Firebase AI Logic hybrid inference.">
+<meta property="og:title" content="Conuco · the field assistant that works without signal">
+<meta property="og:description" content="On-device crop doctor with Gemini Nano, weather decisions, market prices and outbreak map. Firebase AI Logic hybrid inference.">
+<meta property="og:image" content="https://petiht.com/conuco/assets/icon-512.png">
+<meta name="theme-color" content="#1f6f3f">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/site.css?v=1">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="./"><img src="assets/logo.svg" alt="" width="36" height="36"><span>Conuco</span></a>
+  <nav><a href="#how">How it works</a><a href="#features">Features</a><a href="#judges">For judges</a></nav>
+  <a class="btn primary" href="app.html">Open the app</a>
+</header>
+
+<main>
+<section class="hero">
+  <div class="hero-text">
+    <p class="kicker">Firebase AI Logic · Gemini Nano on the device · Offline first</p>
+    <h1>The field assistant that keeps working <em>where the signal stops.</em></h1>
+    <p class="lead">Conuco reads a photo of a sick leaf with <strong>Gemini Nano on the farmer's own device</strong>, turns the forecast into clear decisions (spray, water, scout), shares market prices and outbreak warnings between neighbours, and keeps the whole farm log working with no connection.</p>
+    <div class="cta">
+      <a class="btn primary lg" href="app.html">Open Conuco on the web</a>
+      <a class="btn ghost lg" href="download/conuco.apk">Android app (APK)</a>
+    </div>
+    <p class="small muted">Spanish and English · built for the Dominican Republic first, works anywhere · free, no ads</p>
+  </div>
+  <div class="phone" aria-hidden="true">
+    <div class="screen">
+      <div class="p-top"><span class="p-badge dev">On this device · photo never left</span></div>
+      <div class="p-card"><b>Black Sigatoka</b><small>Plantain · fungus · moderate</small><div class="p-meter"><i></i></div><small>Confidence 82%</small></div>
+      <div class="p-card"><b>Do now</b><small>1. Cut and remove leaves with black streaks</small><small>2. Open space between plants for air</small><small>3. Clear drains, the soil stays wet</small></div>
+      <div class="p-row"><span class="p-dec good">Spray · 7–10 am</span><span class="p-dec bad">Fungus risk · High</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div><b>500 M+</b><span>small farms grow a third of the world's food</span></div>
+  <div><b>20–40 %</b><span>of crops are lost to pests and diseases every year (FAO)</span></div>
+  <div><b>0 bytes</b><span>leave the phone for an on-device diagnosis</span></div>
+</section>
+
+<section id="how" class="how">
+  <h2>Hybrid by design: the device first, the cloud only when it helps</h2>
+  <div class="flow">
+    <div class="step"><span class="n">1</span><h3>Rules on the phone</h3><p>Weather becomes decisions with transparent agronomy rules: safe spray windows, a 3-day water balance (FAO-56), hours of leaf wetness for fungus risk. No AI needed, no guessing.</p></div>
+    <div class="step"><span class="n">2</span><h3>Gemini Nano on the device</h3><p>The photo is redrawn on the device (GPS and phone data removed) and read by Gemini Nano through Firebase AI Logic (<code>ONLY_ON_DEVICE</code>). The answer is a structured diagnosis with an honest confidence.</p></div>
+    <div class="step"><span class="n">3</span><h3>Cloud second opinion, with consent</h3><p>When Nano is unsure (under the confidence floor set in Remote Config), Conuco asks before sending the photo to Gemini in the cloud (<code>ONLY_IN_CLOUD</code>), then shows whether the two opinions agree.</p></div>
+    <div class="step"><span class="n">4</span><h3>Fresh answers, on request</h3><p>Questions about this week's prices or programmes can use the cloud with Google Search grounding, with sources. Everything else is answered on the device, also by voice.</p></div>
+  </div>
+  <p class="center muted">Every answer shows where it ran and <em>why</em>: "On this device · photo never left" or "Cloud · with your consent".</p>
+</section>
+
+<section id="features" class="features">
+  <h2>Everything a small farm needs, in one offline app</h2>
+  <div class="grid">
+    <article><h3>Crop doctor</h3><p>Photo → problem, confidence, severity, what you see, what to do now, how to prevent it. A photo-quality check (blur, light) runs first. A symptom guide works on any phone with no AI at all.</p></article>
+    <article><h3>Safe advice only</h3><p>Conuco never gives pesticide doses. A safety filter removes doses and banned chemicals from any AI text and sends the farmer to the label and to the extension officer.</p></article>
+    <article><h3>Today's decisions</h3><p>Spray now or wait, water or skip, fungus pressure, heat and heavy-rain warnings. Gemini Nano explains the day in plain words, and reads it aloud.</p></article>
+    <article><h3>Neighbour outbreak map</h3><p>One tap warns nearby farms: crop + problem + an 11 km area, never a farm location or a name. Alerts appear when a problem spreads near you.</p></article>
+    <article><h3>Market prices</h3><p>Farmers share what buyers pay. Conuco shows the median, the range, the trend and the best nearby market, per crop and unit (pound, quintal, bunch…).</p></article>
+    <article><h3>Farm log that works offline</h3><p>Plots, planting dates, work, costs and sales. Dictate an entry by voice. Firestore keeps everything on the phone and syncs when the signal comes back.</p></article>
+  </div>
+</section>
+
+<section class="tech">
+  <h2>Built on Firebase</h2>
+  <ul class="pills">
+    <li><b>Firebase AI Logic</b> hybrid inference (Gemini Nano + Gemini)</li>
+    <li><b>App Check</b> reCAPTCHA Enterprise (web) · Play Integrity (Android)</li>
+    <li><b>Firestore</b> offline persistence + strict security rules</li>
+    <li><b>Authentication</b> anonymous start, email upgrade</li>
+    <li><b>Remote Config</b> model, confidence floor, kill switches</li>
+    <li><b>Analytics</b> where the AI ran, never what was said</li>
+    <li><b>Hosting</b> with a strict Content-Security-Policy</li>
+  </ul>
+</section>
+
+<section id="judges" class="judges">
+  <h2>Try it in two minutes</h2>
+  <ol>
+    <li>Open <a href="app.html">the app</a>, choose <b>Start without an account</b> (or sign in with the demo account in the Devpost notes).</li>
+    <li>Pick a town (for example <b>Santiago, Dominican Republic</b>) and your crops. Keep <b>Add a sample farm</b> ticked.</li>
+    <li><b>Today</b>: the weather decisions, then <b>Explain my day</b>.</li>
+    <li><b>Doctor</b>: use a sample photo or your own leaf photo, mode <b>Smart</b>. Open <b>How Conuco decided where to run</b>.</li>
+    <li>Turn off Wi-Fi: the log, the last forecast, prices and the on-device doctor keep working.</li>
+  </ol>
+  <p class="muted small">On-device AI needs Chrome on a desktop with Gemini Nano (about 22 GB free disk and a GPU with more than 4 GB of VRAM, or 16 GB of RAM). Without it, Conuco uses the cloud after asking, or the symptom guide.</p>
+</section>
+</main>
+
+<footer class="foot">
+  <p><img src="assets/logo.svg" alt="" width="22" height="22"> Conuco · a <i>conuco</i> is a small family farm plot in the Caribbean. Open source under Apache-2.0.</p>
+  <p class="small muted">Weather: Open-Meteo. Map: © OpenStreetMap contributors. Conuco gives general guidance, not professional agronomic advice.</p>
+</footer>
+</body>
+</html>
