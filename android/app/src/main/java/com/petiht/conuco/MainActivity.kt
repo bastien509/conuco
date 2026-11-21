@@ -152,9 +152,10 @@ class MainActivity : ComponentActivity(), Actions {
         val c = cc
         Row(Modifier.fillMaxWidth().background(c.card).statusBarsPadding().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Image(painterResource(R.drawable.ic_launcher_foreground), null, Modifier.size(36.dp).background(c.green, androidx.compose.foundation.shape.RoundedCornerShape(10.dp)))
-            Text("Conuco", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, modifier = Modifier.weight(1f))
-            Pill(tr(if (s.online) "online" else "offline"), if (s.online) c.green else c.amber, if (s.online) c.greenSoft else c.amberSoft, if (s.online) Icons.Outlined.Wifi else Icons.Outlined.WifiOff)
-            Pill(tr("nano_${s.nano}"), if (s.nano == "available") c.green else c.muted, if (s.nano == "available") c.greenSoft else c.surface, Icons.Outlined.Memory)
+            Text("Conuco", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, maxLines = 1, softWrap = false)
+            Spacer(Modifier.weight(1f))
+            Icon(if (s.online) Icons.Outlined.Wifi else Icons.Outlined.WifiOff, tr(if (s.online) "online" else "offline"), tint = if (s.online) c.green else c.amber, modifier = Modifier.size(20.dp))
+            Pill(if (s.nano == "available") "Nano ✓" else "Nano –", if (s.nano == "available") c.green else c.muted, if (s.nano == "available") c.greenSoft else c.surface, Icons.Outlined.Memory)
             IconButton(onClick = onSettings) { Icon(Icons.Outlined.Settings, tr("settings")) }
         }
     }

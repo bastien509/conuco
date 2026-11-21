@@ -289,6 +289,9 @@ class Ai(private val context: Context) {
         }
     }
 
+    /** Small models and the cloud sometimes answer in Markdown; the app shows plain text. */
+    private fun plain(t: String) = t.replace(Regex("""\*\*|__|^#{1,4}\s*""", RegexOption.MULTILINE), "").replace(Regex("""^\s*[*-]\s+""", RegexOption.MULTILINE), "• ").trim()
+
     data class Reply(val text: String, val source: String, val ms: Long, val grounded: Boolean, val sources: List<Pair<String, String>>, val trace: List<String>, val filtered: Boolean)
 
     suspend fun ask(question: String, context: String, lang: String, fresh: Boolean): Reply {
@@ -317,7 +320,7 @@ class Ai(private val context: Context) {
             run(if (online) InferenceMode.PREFER_ON_DEVICE else InferenceMode.ONLY_ON_DEVICE, null, "ask") { text(prompt) }
         }
         trace += (if (a.source == "on_device") (if (es) "En el teléfono" else "On the phone") else (if (es) "En la nube" else "In the cloud")) + " · ${a.ms / 1000.0} s"
-        val (txt, changed) = Rules.safe(a.text.trim(), outLang)
+        val (txt, changed) = Rules.safe(plain(a.text), outLang)
         return Reply(txt, a.source, a.ms, grounded, a.sources, trace, changed)
     }
 }

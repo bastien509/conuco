@@ -177,7 +177,7 @@ fun TodayScreen(s: AppState, a: Actions) {
                 busy = true; err = ""
                 scope.launch { try { brief = a.brief() } catch (e: Throwable) { err = tr("err", "m" to (e.message ?: "")) }; busy = false }
             } else CCard(border = c.green, bg = c.greenSoft) {
-                Row(verticalAlignment = Alignment.CenterVertically) { SourceBadge(b.source, b.ms); Spacer(Modifier.weight(1f)); TextButton(onClick = { a.speak(b.headline + ". " + b.steps.joinToString(". ")) }) { Icon(Icons.Outlined.VolumeUp, null); Text(tr("listen")) } }
+                Row(verticalAlignment = Alignment.CenterVertically) { SourceBadge(b.source, b.ms, text = true); Spacer(Modifier.weight(1f)); TextButton(onClick = { a.speak(b.headline + ". " + b.steps.joinToString(". ")) }) { Icon(Icons.Outlined.VolumeUp, null); Text(tr("listen")) } }
                 Text(b.headline, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp)
                 b.steps.forEachIndexed { i, st -> Text("${i + 1}. $st", fontWeight = FontWeight.SemiBold) }
                 TraceBox(b.trace)
@@ -352,7 +352,7 @@ fun MarketScreen(s: AppState, a: Actions) {
                 }
                 Text(money(r.median, cur, s.lang), fontSize = 26.sp, fontWeight = FontWeight.ExtraBold)
                 Muted("${tr("reports", "n" to r.n)} · ${money(r.min, cur, s.lang)}–${money(r.max, cur, s.lang)}", 13)
-                r.trend?.let { t -> Text(if (t > 2) "▲ $t%" else if (t < -2) "▼ ${-t}%" else "=", color = if (t > 2) c.green else if (t < -2) c.red else c.muted, fontWeight = FontWeight.Bold, fontSize = 13.sp) }
+                r.trend?.let { t -> Text(if (t > 2) "▲ $t%" else if (t < -2) "▼ ${-t}%" else tr("same"), color = if (t > 2) c.green else if (t < -2) c.red else c.muted, fontWeight = FontWeight.Bold, fontSize = 13.sp) }
                 if (r.bestMarket != null && r.n > 1) Text(tr("best", "m" to "${r.bestMarket} (${money(r.bestPrice ?: 0.0, cur, s.lang)})"), color = c.green, fontWeight = FontWeight.Bold, fontSize = 13.sp)
             } }
         }
@@ -432,7 +432,7 @@ fun FarmScreen(s: AppState, a: Actions) {
                 val age = pl.planted.takeIf { it.isNotBlank() }?.let { runCatching { ChronoUnit.DAYS.between(LocalDate.parse(it), LocalDate.now()) }.getOrNull() }
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Dot(Color(Crops.get(pl.crop).color)); Text("${pl.name} · ${Crops.name(pl.crop, s.lang)}", Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
-                    Muted(listOfNotNull(if (pl.area > 0) "%.1f %s".format(pl.area / (Crops.AREA_UNITS[unit] ?: 1.0), tr("area_$unit")) else null, age?.let { "$it d" }).joinToString(" · "), 12)
+                    Muted(listOfNotNull(if (pl.area > 0) "%.1f %s".format(pl.area / (Crops.AREA_UNITS[unit] ?: 1.0), tr("area_$unit")) else null, age?.let { if (it >= 365) "${it / 365} ${if (s.lang == "es") "años" else "yr"}" else "$it d" }).joinToString(" · "), 12)
                 }
             }
         }
@@ -519,7 +519,7 @@ fun AskScreen(s: AppState, a: Actions, chat: MutableList<ChatMsg>) {
         chat.forEach { m ->
             if (m.me) Text(m.text, Modifier.fillMaxWidth(0.85f).align(Alignment.End).clip(RoundedCornerShape(16.dp)).background(c.green).padding(12.dp), color = c.onGreen, fontWeight = FontWeight.SemiBold)
             else CCard(border = if (m.error) c.red else null) {
-                m.reply?.let { r -> Row(verticalAlignment = Alignment.CenterVertically) { SourceBadge(if (r.grounded) "grounded" else r.source, r.ms); Spacer(Modifier.weight(1f)); IconButton(onClick = { a.speak(r.text) }) { Icon(Icons.Outlined.VolumeUp, tr("listen"), tint = c.green) } } }
+                m.reply?.let { r -> Row(verticalAlignment = Alignment.CenterVertically) { SourceBadge(if (r.grounded) "grounded" else r.source, r.ms, text = true); Spacer(Modifier.weight(1f)); IconButton(onClick = { a.speak(r.text) }) { Icon(Icons.Outlined.VolumeUp, tr("listen"), tint = c.green) } } }
                 Text(m.text, color = if (m.error) c.red else c.ink)
                 m.reply?.let { r ->
                     if (r.filtered) Note(tr("filtered"), icon = Icons.Outlined.Shield)

@@ -55,7 +55,7 @@ fun Pill(text: String, fg: Color, bg: Color, icon: ImageVector? = null) {
 }
 
 @Composable
-fun SourceBadge(source: String, ms: Long = 0) {
+fun SourceBadge(source: String, ms: Long = 0, text: Boolean = false) {
     val c = cc
     val (fg, bg, ic) = when (source) {
         "on_device" -> Triple(c.onGreen, c.green, Icons.Outlined.Memory)
@@ -63,7 +63,7 @@ fun SourceBadge(source: String, ms: Long = 0) {
         "grounded" -> Triple(Color.White, c.cloud, Icons.Outlined.TravelExplore)
         else -> Triple(Color(0xFF1F1A00), c.sun, Icons.Outlined.Rule)
     }
-    Pill(tr("src_$source") + if (ms > 0) " · ${"%.1f".format(ms / 1000.0)} s" else "", fg, bg, ic)
+    Pill(tr(if (text && source == "in_cloud") "src_text_cloud" else "src_$source") + if (ms > 0) " · ${"%.1f".format(ms / 1000.0)} s" else "", fg, bg, ic)
 }
 
 @Composable

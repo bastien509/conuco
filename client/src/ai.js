@@ -364,7 +364,8 @@ export async function askConuco({ question, context, lang, fresh = false }) {
   const gm = r.res.candidates?.[0]?.groundingMetadata;
   const sources = (gm?.groundingChunks || []).map((c) => c.web).filter((w) => w?.uri)
     .slice(0, 5).map((w) => ({ title: String(w.title || w.uri).slice(0, 80), uri: w.uri }));
-  const answer = safeText(r.res.text(), outLang);
+  const md = r.res.text().replace(/\*\*|__|^#{1,4}\s*/gm, '').replace(/^\s*[*-]\s+/gm, '• ');
+  const answer = safeText(md, outLang);
   return {
     text: answer.text.trim(), filtered: answer.changed, source: r.source, ms: r.ms, trace, sources,
     searchHtml: gm?.searchEntryPoint?.renderedContent || '', grounded,

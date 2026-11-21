@@ -786,7 +786,7 @@ function viewFarm() {
         const age = x.planted ? Math.max(0, Math.round((Date.now() - new Date(`${x.planted}T12:00`)) / 86400000)) : null;
         return h('li', {}, h('i', { class: 'dot', style: { background: CROPS[x.crop]?.color } }),
           h('span', {}, h('strong', { text: x.name }), ` · ${cropName(x.crop, getLang())}`),
-          h('small', { text: [x.area ? `${Math.round((x.area / AREA_UNITS[unit]) * 10) / 10} ${t(`area_${unit}`)}` : '', age != null ? t('f_age', { d: age }) : ''].filter(Boolean).join(' · ') }));
+          h('small', { text: [x.area ? `${Math.round((x.area / AREA_UNITS[unit]) * 10) / 10} ${t(`area_${unit}`)}` : '', age != null ? (age >= 365 ? `${Math.floor(age / 365)} ${getLang() === 'es' ? 'años' : 'yr'}` : t('f_age', { d: age })) : ''].filter(Boolean).join(' · ') }));
       })) : h('p', { class: 'muted', text: t('f_no_plots') }));
   };
   const plotForm = () => {
