@@ -1,0 +1,12 @@
+[
+ {"id": "n1_hook", "text": "Small farms grow a third of the world's food, and pests and diseases take a big share of every harvest. In the Dominican hills, the signal is weak and help is far away."},
+ {"id": "n2_idea", "text": "Conuco is a field assistant built on Firebase AI Logic hybrid inference: rules and Gemini Nano on the device first, the cloud only when the farmer says yes."},
+ {"id": "n3_onboard", "text": "Rosa starts without an account and picks her town and her crops. Only a one-kilometre area is saved, never her exact position."},
+ {"id": "n4_today", "text": "Today turns the forecast into decisions: the next safe spray window, a three-day water balance, and fungus risk from hours of leaf wetness. Neighbours reported Black Sigatoka nearby. Gemini Nano explains the day right here in Chrome, using only the rule facts. No location, no names."},
+ {"id": "n5_doctor", "text": "The crop doctor. A banana leaf, Smart mode. The photo is redrawn on the device, so GPS and phone data are gone, and Gemini Nano reads it on this laptop's CPU. Black Sigatoka, with honest confidence and safe first steps. Conuco never gives pesticide doses. On this device, the photo never left."},
+ {"id": "n6_cloud", "text": "On an older device, choose Cloud first. Conuco asks before the photo leaves. With a yes, Gemini answers in seconds, protected by App Check: coffee leaf rust, severe. One tap warns the neighbours."},
+ {"id": "n7_map", "text": "The warning lands on the outbreak map as an eleven-kilometre area. Never a farm, never a name."},
+ {"id": "n8_market", "text": "Farmers share prices in pesos, with the trend and the best nearby market. The farm log and all of this keep working offline with Firestore."},
+ {"id": "n9_android", "text": "Conuco is also a native Android app, with the Firebase AI Logic Android SDK and Play Integrity. This phone has no Gemini Nano, so Conuco asks first, then uses the cloud. On phones with Nano, the doctor runs on the device."},
+ {"id": "n10_close", "text": "Remote Config tunes the model and the confidence floor without a new build. Conuco: a field assistant for every small farm, even where the signal stops."}
+]

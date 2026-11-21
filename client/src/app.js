@@ -530,7 +530,7 @@ function viewDoctor() {
   go.addEventListener('click', async () => {
     if (!draft.photo) return;
     go.disabled = true;
-    fill(out, h('div', { class: 'card busy' }, h('span', { class: 'spin' }), h('span', { text: t('d_busy') })));
+    fill(out, h('div', { class: 'card busy' }, h('span', { class: 'spin' }), h('span', { text: t(draft.mode === 'cloud' ? 'd_busy_cloud' : 'd_busy') })));
     try {
       const r = await diagnose({
         photo: draft.photo, crop: draft.crop, note: draft.note, lang: getLang(), mode: draft.mode,

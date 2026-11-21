@@ -308,7 +308,7 @@ export async function farmBrief({ facts, lang }) {
   const r = await run(mode, 'brief', [prompt], outLang, 'brief');
   const d = parseJson(r.res.text());
   const steps = (Array.isArray(d.steps) ? d.steps : []).slice(0, 3).map((s) => safeText(String(s), outLang).text);
-  trace.push({ code: r.source === 'on_device' ? 'device_done' : 'cloud_done', ms: r.ms });
+  trace.push({ code: r.source === 'on_device' ? 'device_done_text' : 'cloud_done', ms: r.ms });
   return { headline: safeText(String(d.headline || ''), outLang).text, steps, source: r.source, ms: r.ms, trace };
 }
 
@@ -360,7 +360,7 @@ export async function askConuco({ question, context, lang, fresh = false }) {
     trace.push({ code: online ? 'prefer_device' : 'offline_device' });
     r = await run(online ? InferenceMode.PREFER_ON_DEVICE : InferenceMode.ONLY_ON_DEVICE, 'text', [prompt], outLang, 'ask');
   }
-  trace.push({ code: r.source === 'on_device' ? 'device_done' : 'cloud_done', ms: r.ms });
+  trace.push({ code: r.source === 'on_device' ? 'device_done_text' : 'cloud_done', ms: r.ms });
   const gm = r.res.candidates?.[0]?.groundingMetadata;
   const sources = (gm?.groundingChunks || []).map((c) => c.web).filter((w) => w?.uri)
     .slice(0, 5).map((w) => ({ title: String(w.title || w.uri).slice(0, 80), uri: w.uri }));

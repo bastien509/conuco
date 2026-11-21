@@ -1,0 +1,139 @@
+1
+00:00:00,350 --> 00:00:04,174
+Small farms grow a third of the world's food, and pests and
+
+2
+00:00:04,224 --> 00:00:06,998
+diseases take a big share of every harvest.
+
+3
+00:00:07,048 --> 00:00:11,200
+In the Dominican hills, the signal is weak and help is far away.
+
+4
+00:00:12,550 --> 00:00:16,960
+Conuco is a field assistant built on Firebase AI Logic hybrid
+
+5
+00:00:17,010 --> 00:00:21,566
+inference: rules and Gemini Nano on the device first, the cloud
+
+6
+00:00:21,616 --> 00:00:23,760
+only when the farmer says yes.
+
+7
+00:00:25,050 --> 00:00:29,495
+Rosa starts without an account and picks her town and her crops.
+
+8
+00:00:29,545 --> 00:00:33,780
+Only a one-kilometre area is saved, never her exact position.
+
+9
+00:00:36,250 --> 00:00:40,576
+Today turns the forecast into decisions: the next safe spray
+
+10
+00:00:40,626 --> 00:00:45,026
+window, a three-day water balance, and fungus risk from hours
+
+11
+00:00:45,076 --> 00:00:49,329
+of leaf wetness. Neighbours reported Black Sigatoka nearby.
+
+12
+00:00:49,379 --> 00:00:53,778
+Gemini Nano explains the day right here in Chrome, using only
+
+13
+00:00:53,828 --> 00:00:56,550
+the rule facts. No location, no names.
+
+14
+00:01:01,250 --> 00:01:04,458
+The crop doctor. A banana leaf, Smart mode.
+
+15
+00:01:04,508 --> 00:01:09,079
+The photo is redrawn on the device, so GPS and phone data are
+
+16
+00:01:09,129 --> 00:01:13,019
+gone, and Gemini Nano reads it on this laptop's CPU.
+
+17
+00:01:13,069 --> 00:01:17,565
+Black Sigatoka, with honest confidence and safe first steps.
+
+18
+00:01:17,615 --> 00:01:20,217
+Conuco never gives pesticide doses.
+
+19
+00:01:20,267 --> 00:01:23,020
+On this device, the photo never left.
+
+20
+00:01:27,483 --> 00:01:30,383
+On an older device, choose Cloud first.
+
+21
+00:01:30,433 --> 00:01:33,105
+Conuco asks before the photo leaves.
+
+22
+00:01:33,155 --> 00:01:37,794
+With a yes, Gemini answers in seconds, protected by App Check:
+
+23
+00:01:37,844 --> 00:01:41,953
+coffee leaf rust, severe. One tap warns the neighbours.
+
+24
+00:01:48,083 --> 00:01:52,201
+The warning lands on the outbreak map as an eleven-kilometre
+
+25
+00:01:52,251 --> 00:01:54,493
+area. Never a farm, never a name.
+
+26
+00:01:57,583 --> 00:02:01,756
+Farmers share prices in pesos, with the trend and the best nearby
+
+27
+00:02:01,806 --> 00:02:05,784
+market. The farm log and all of this keep working offline with
+
+28
+00:02:05,834 --> 00:02:06,433
+Firestore.
+
+29
+00:02:09,883 --> 00:02:14,703
+Conuco is also a native Android app, with the Firebase AI Logic
+
+30
+00:02:14,753 --> 00:02:17,099
+Android SDK and Play Integrity.
+
+31
+00:02:17,149 --> 00:02:21,891
+This phone has no Gemini Nano, so Conuco asks first, then uses
+
+32
+00:02:21,941 --> 00:02:26,683
+the cloud. On phones with Nano, the doctor runs on the device.
+
+33
+00:02:35,317 --> 00:02:39,681
+Remote Config tunes the model and the confidence floor without
+
+34
+00:02:39,731 --> 00:02:43,953
+a new build. Conuco: a field assistant for every small farm,
+
+35
+00:02:44,003 --> 00:02:45,947
+even where the signal stops.

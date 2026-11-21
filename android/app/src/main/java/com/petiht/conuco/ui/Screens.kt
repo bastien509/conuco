@@ -252,7 +252,7 @@ fun DoctorScreen(s: AppState, a: Actions) {
         if (busy) LinearProgressIndicator(Modifier.fillMaxWidth(), color = c.green)
         res?.let { r ->
             r.first?.let { DiagCard(it, false, s, a) }
-            r.second?.let { DiagCard(it, true, s, a) }
+            r.second?.let { DiagCard(it, r.first != null, s, a) }
             if (r.first != null && r.second != null) Note(if (a.ai.agree(r.first, r.second)) tr("agree") else tr("disagree"), warn = !a.ai.agree(r.first, r.second))
             (r.second ?: r.first)?.takeIf { it.isPlant }?.let { best -> DiagActions(crop, best, r, s, a) }
             if (r.symptoms) SymptomCard(crop, s)
