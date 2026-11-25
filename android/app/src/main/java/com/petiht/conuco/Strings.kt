@@ -3,7 +3,7 @@ package com.petiht.conuco
 /** UI strings in English and Spanish. tr("key", "n" to 3) fills {n}. */
 object Strings {
     var lang = "es"
-    private val EN = mapOf(
+    internal val EN = mapOf(
         "today" to "Today", "doctor" to "Doctor", "market" to "Market", "map" to "Nearby", "farm" to "Farm", "ask" to "Ask", "settings" to "Settings",
         "online" to "Online", "offline" to "Offline", "nano_available" to "Gemini Nano ready", "nano_downloadable" to "Gemini Nano: download",
         "nano_downloading" to "Gemini Nano: downloading", "nano_unavailable" to "No on-device model",
@@ -63,7 +63,7 @@ object Strings {
         "s_alerts" to "Alerts", "s_alerts_on" to "Daily alerts", "s_alerts_d" to "Outbreaks near your crops, spray windows and fungus risk. Checked every 6 hours, also offline.",
         "s_alerts_test" to "Check now", "s_alerts_test_ok" to "Checking. Alerts will appear in a moment.", "s_widget_add" to "Add widget to home screen", "s_widget" to "Tip: add the Conuco widget to your home screen to see today's decision.",
     )
-    private val ES = mapOf(
+    internal val ES = mapOf(
         "today" to "Hoy", "doctor" to "Doctor", "market" to "Mercado", "map" to "Cerca", "farm" to "Finca", "ask" to "Pregunta", "settings" to "Ajustes",
         "online" to "En línea", "offline" to "Sin señal", "nano_available" to "Gemini Nano listo", "nano_downloadable" to "Gemini Nano: descargar",
         "nano_downloading" to "Gemini Nano: descargando", "nano_unavailable" to "Sin modelo local",
@@ -73,7 +73,7 @@ object Strings {
         "w_privacy" to "No guardamos fotos. Precios y puntos de brotes compartidos no tienen nombres y solo indican una zona de 11 km.",
         "o_title" to "Prepara tu conuco", "o_place" to "¿Dónde está tu finca?", "o_search" to "Buscar un pueblo", "o_gps" to "Usar mi ubicación", "o_found" to "Zona de la finca: {p}",
         "o_crops" to "¿Qué siembras?", "o_name" to "Tu nombre (opcional)", "o_sample" to "Agregar una finca de ejemplo", "o_done" to "Empezar", "o_need" to "Elige un lugar y al menos un cultivo.",
-        "hello" to "Buenos {part}", "morning" to "días", "afternoon" to "tardes", "evening" to "noches",
+        "hello" to "{part}", "morning" to "Buenos días", "afternoon" to "Buenas tardes", "evening" to "Buenas noches",
         "humidity" to "Humedad", "wind" to "Viento", "rain" to "Lluvia", "updated" to "Pronóstico {ago}", "cached" to "Pronóstico guardado (sin señal)", "wx_none" to "Aún no hay pronóstico. Conéctate una vez.",
         "spray" to "Fumigar", "spray_ok" to "Buenas condiciones ahora", "spray_next" to "Próxima ventana: {when} ({h} h)", "spray_none" to "Sin ventana segura en 48 h",
         "b_wind" to "viento {v} km/h", "b_rain" to "{v} mm de lluvia en 6 h", "b_heat" to "{v} °C demasiado calor", "b_dark" to "fuera de horas de luz",

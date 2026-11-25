@@ -86,7 +86,7 @@ const S = {
     w_privacy: 'No guardamos fotos. Lo compartido (precios, puntos de brotes) no tiene nombres y solo indica una zona de 11 km.',
     o_title: 'Prepara tu conuco', o_lang: 'Idioma', o_place: '¿Dónde está tu finca?', o_gps: 'Usar mi ubicación', o_search: 'Buscar un pueblo', o_found: 'Zona de la finca: {place}',
     o_gps_note: 'Solo se guarda una zona de 1 km, nunca tu posición exacta.', o_crops: '¿Qué siembras?', o_name: 'Tu nombre (opcional)', o_sample: 'Agregar una finca de ejemplo para probar todo', o_done: 'Empezar', o_need: 'Elige un lugar y al menos un cultivo.',
-    t_hello: 'Buenos {part}, {name}', t_hello_anon: 'Buenos {part}', part_morning: 'días', part_afternoon: 'tardes', part_evening: 'noches',
+    t_hello: '{part}, {name}', t_hello_anon: '{part}', part_morning: 'Buenos días', part_afternoon: 'Buenas tardes', part_evening: 'Buenas noches',
     t_now: 'Ahora', t_rain: 'Lluvia', t_wind: 'Viento', t_humidity: 'Humedad', t_updated: 'Pronóstico de {ago}', t_cached: 'Pronóstico guardado (sin señal)', t_wx_err: 'Aún no hay pronóstico. Conéctate una vez para cargarlo.',
     t_spray: 'Fumigar', t_spray_ok: 'Buenas condiciones ahora', t_spray_next: 'Próxima ventana buena: {when} ({h} h)', t_spray_none: 'No hay ventana segura en las próximas 48 h',
     b_wind: 'viento {value} km/h (límite {limit})', b_rain: '{value} mm de lluvia en las próximas 6 h', b_heat: '{value} °C es demasiado calor', b_dark: 'fuera de horas de luz',

@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -12,8 +13,8 @@ android {
         applicationId = "com.petiht.conuco"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.1.0"
+        versionCode = 4
+        versionName = "1.2.0"
     }
 
     signingConfigs {
@@ -59,6 +60,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
     implementation("androidx.exifinterface:exifinterface:1.4.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     // Phase 1 Android integration: daily alerts, home-screen widget, in-app camera.
@@ -77,8 +79,14 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-config")
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-perf")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     // Firebase AI Logic with hybrid (on-device Gemini Nano + cloud) inference.
     implementation("com.google.firebase:firebase-ai:18.2.0")
     implementation("com.google.firebase:firebase-ai-ondevice:16.0.0-beta08")
+
+    // Local JVM unit tests for the offline rules, market math, outbreak alerts, safety filter and translations.
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
 }
