@@ -46,14 +46,27 @@ a { color: var(--green); }
 .icon-btn:hover { background: var(--green-soft); }
 body:not(.in-app) .tabs, body:not(.in-app) .status, body:not(.in-app) .icon-btn { display: none; }
 .view { max-width: 820px; margin: 0 auto; padding: 18px 16px 110px; outline: none; }
-.tabs { position: fixed; z-index: 30; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(6, 1fr); background: var(--card); border-top: 1px solid var(--line); padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
+.tabs { position: fixed; z-index: 30; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; background: var(--card); border-top: 1px solid var(--line); padding: 4px 4px calc(6px + env(safe-area-inset-bottom)); }
 .tabs a { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; border-radius: 12px; color: var(--muted); text-decoration: none; font-size: .72rem; font-weight: 700; }
 .tabs a .ic { width: 24px; height: 24px; }
-.tabs a.on { color: var(--green); background: var(--green-soft); }
+.tabs a.on { color: var(--green); }
 .tabs a:hover { color: var(--green); }
+.tabs a.center { padding-top: 34px; position: relative; }
+.tabs a.center .cam { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--green); color: var(--on-green, #fff); border: 5px solid var(--bg); }
+.tabs a.center .cam .ic { width: 28px; height: 28px; }
+.tabs a.center:active .cam { transform: translateX(-50%) scale(.95); }
+.tabs a.fab { position: fixed; right: 16px; bottom: calc(92px + env(safe-area-inset-bottom)); width: 48px; height: 48px; padding: 0; justify-content: center; border-radius: 50%; background: var(--card); color: var(--green); border: 1px solid var(--line); box-shadow: 0 4px 14px rgba(16,35,26,.18); }
+.tabs a.fab .lbl { display: none; }
+body[data-r="ask"] .tabs a.fab { display: none; }
 @media (min-width: 960px) {
-  .tabs { top: 64px; bottom: auto; right: auto; width: 200px; grid-template-columns: 1fr; gap: 4px; padding: 16px 12px; border: 0; background: transparent; }
-  .tabs a { flex-direction: row; gap: 12px; font-size: .98rem; padding: 10px 14px; }
+  .tabs { top: 64px; bottom: auto; right: auto; width: 200px; grid-template-columns: 1fr; gap: 4px; padding: 16px 12px; border: 0; background: transparent; align-items: stretch; }
+  .tabs a, .tabs a.center, .tabs a.fab { position: static; flex-direction: row; gap: 12px; font-size: .98rem; padding: 10px 14px; width: auto; height: auto; justify-content: flex-start; border: 0; border-radius: 12px; background: none; box-shadow: none; color: var(--muted); }
+  .tabs a.on { color: var(--green); background: var(--green-soft); }
+  .tabs a.center .cam { position: static; transform: none; width: auto; height: auto; border: 0; background: none; color: inherit; }
+  .tabs a.center .cam .ic { width: 24px; height: 24px; }
+  .tabs a.fab .lbl { display: inline; }
+  body[data-r="ask"] .tabs a.fab { display: flex; }
+  .tabs a[data-r="today"] { order: 1; } .tabs a[data-r="doctor"] { order: 2; } .tabs a[data-r="market"] { order: 3; } .tabs a[data-r="map"] { order: 4; } .tabs a[data-r="farm"] { order: 5; } .tabs a[data-r="ask"] { order: 6; }
   .view { padding-bottom: 60px; }
   body.in-app .view { margin-left: max(220px, calc(50vw - 410px)); }
 }

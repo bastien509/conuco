@@ -160,10 +160,17 @@ function addWeatherTasks() {
 }
 
 // ---------- shell ----------
-const NAV = [['today', 'sun'], ['doctor', 'leaf'], ['market', 'scale'], ['map', 'pin'], ['farm', 'book'], ['ask', 'mic']];
+// Phone order: Hoy, Mercado, [Doctor camera], Cerca, Finca; Pregunta is a floating mic. CSS restores the list order on desktop.
+const NAV = [['today', 'sun'], ['market', 'scale'], ['doctor', 'camera', 'center'], ['map', 'pin'], ['farm', 'book'], ['ask', 'mic', 'fab']];
 function renderShell() {
   const nav = $('#nav');
-  fill(nav, ...NAV.map(([r, ic]) => h('a', { href: `#${r}`, 'data-r': r }, icon(ic), h('span', { text: t(`nav_${r}`) }))));
+  fill(nav, ...NAV.map(([r, ic, cls]) => h('a', { href: `#${r}`, 'data-r': r, class: cls || '', 'aria-label': t(`nav_${r}`) },
+    cls === 'center' ? h('span', { class: 'cam' }, icon(ic)) : icon(ic), h('span', { class: 'lbl', text: t(`nav_${r}`) }))));
+  // A second tap on the camera while already on Doctor opens the photo picker directly.
+  nav.querySelector('a.center').addEventListener('click', (e) => {
+    const input = document.getElementById('photo');
+    if (location.hash === '#doctor' && input) { e.preventDefault(); input.click(); }
+  });
   $('#to-settings').setAttribute('aria-label', t('nav_settings'));
   $('#to-settings').title = t('nav_settings');
   renderStatus();
@@ -184,6 +191,7 @@ function route() {
   if (!state.profile) return;
   const r = (location.hash || '#today').slice(1) || 'today';
   document.querySelectorAll('#nav a').forEach((a) => a.classList.toggle('on', a.dataset.r === r));
+  document.body.dataset.r = r;
   live.clear();
   stopSpeaking();
   const view = { today: viewToday, doctor: viewDoctor, market: viewMarket, map: viewMap, farm: viewFarm, ask: viewAsk, settings: viewSettings }[r] || viewToday;

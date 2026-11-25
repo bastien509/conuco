@@ -17,6 +17,15 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
@@ -111,14 +120,10 @@ class MainActivity : ComponentActivity(), Actions {
                                 Scaffold(
                                     containerColor = c.surface,
                                     topBar = { TopBar { tab = "settings" } },
-                                    bottomBar = {
-                                        NavigationBar(containerColor = c.card) {
-                                            listOf("today" to Icons.Outlined.WbSunny, "doctor" to Icons.Outlined.Spa, "market" to Icons.Outlined.Storefront,
-                                                "map" to Icons.Outlined.Radar, "farm" to Icons.Outlined.MenuBook, "ask" to Icons.Outlined.Mic).forEach { (k, ic) ->
-                                                NavigationBarItem(selected = tab == k, onClick = { tab = k; stopSpeaking() }, icon = { Icon(ic, null) }, label = { Text(tr(k), fontSize = 11.sp, maxLines = 1) },
-                                                    colors = NavigationBarItemDefaults.colors(indicatorColor = c.greenSoft, selectedIconColor = c.green, selectedTextColor = c.green))
-                                            }
-                                        }
+                                    bottomBar = { NavBar(tab) { k -> if (k == "doctor" && tab == "doctor") openCamera() else tab = k; stopSpeaking() } },
+                                    floatingActionButton = {
+                                        if (tab != "ask") SmallFloatingActionButton(onClick = { tab = "ask"; stopSpeaking() }, containerColor = c.card, contentColor = c.green,
+                                            shape = CircleShape, elevation = FloatingActionButtonDefaults.elevation(2.dp, 4.dp)) { Icon(Icons.Outlined.Mic, tr("ask")) }
                                     },
                                 ) { pad ->
                                     Box(Modifier.padding(pad)) {
@@ -143,6 +148,42 @@ class MainActivity : ComponentActivity(), Actions {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    private fun NavBar(tab: String, go: (String) -> Unit) {
+        val c = cc
+        @Composable
+        fun RowScope.Item(k: String, ic: androidx.compose.ui.graphics.vector.ImageVector) {
+            val on = tab == k
+            Column(Modifier.weight(1f).clip(RoundedCornerShape(12.dp)).clickable { go(k) }.padding(vertical = 6.dp).semantics { selected = on; role = Role.Tab },
+                horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Icon(ic, null, tint = if (on) c.green else c.muted, modifier = Modifier.size(24.dp))
+                Text(tr(k), fontSize = 11.sp, maxLines = 1, color = if (on) c.green else c.muted, fontWeight = if (on) FontWeight.Bold else FontWeight.Medium)
+            }
+        }
+        Box(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(top = 26.dp).fillMaxWidth().background(c.card)) {
+                HorizontalDivider(color = c.line)
+                Row(Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 4.dp, vertical = 4.dp), verticalAlignment = Alignment.Bottom) {
+                    Item("today", Icons.Outlined.WbSunny)
+                    Item("market", Icons.Outlined.Storefront)
+                    val on = tab == "doctor"
+                    Column(Modifier.weight(1f).clip(RoundedCornerShape(12.dp)).clickable { go("doctor") }.padding(vertical = 6.dp).semantics { selected = on; role = Role.Tab },
+                        horizontalAlignment = Alignment.CenterHorizontally) {
+                        Spacer(Modifier.height(26.dp))
+                        Text(tr("doctor"), fontSize = 11.sp, maxLines = 1, color = if (on) c.green else c.muted, fontWeight = if (on) FontWeight.Bold else FontWeight.Medium)
+                    }
+                    Item("map", Icons.Outlined.Radar)
+                    Item("farm", Icons.Outlined.MenuBook)
+                }
+            }
+            Box(Modifier.align(Alignment.TopCenter).size(64.dp).background(c.surface, CircleShape).padding(5.dp)
+                .background(c.green, CircleShape).clip(CircleShape).clickable { go("doctor") }
+                .semantics { contentDescription = tr(if (tab == "doctor") "camera" else "doctor") }, contentAlignment = Alignment.Center) {
+                Icon(Icons.Outlined.PhotoCamera, null, tint = c.onGreen, modifier = Modifier.size(28.dp))
             }
         }
     }

@@ -1,7 +1,7 @@
 // Conuco service worker: keeps the app shell available with no signal.
 // Firestore keeps farm data offline by itself; this only caches Conuco's own files.
-const CACHE = 'conuco-shell-v5';
-const SHELL = ['app.html', 'assets/app.css?v=5', 'assets/conuco.js?v=5', 'vendor/leaflet.css?v=5', 'assets/logo.svg', 'manifest.webmanifest'];
+const CACHE = 'conuco-shell-v6';
+const SHELL = ['app.html', 'assets/app.css?v=6', 'assets/conuco.js?v=6', 'vendor/leaflet.css?v=6', 'assets/logo.svg', 'manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
