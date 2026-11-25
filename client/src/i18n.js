@@ -74,6 +74,11 @@ const S = {
     s_rc: 'Live settings (Remote Config, {src})', s_account: 'Account', s_anon: 'You are using Conuco without an account. Your data is on this device and in your private Firebase space.', s_link: 'Save my farm to an email account', s_linked: 'Signed in as {email}', s_signout: 'Sign out',
     s_sample: 'Add sample farm', s_sample_done: 'Sample farm added.', s_privacy: 'Privacy', s_privacy_text: 'Photos stay on your phone unless you agree to a second opinion. Shared prices and outbreak dots have no names and only an 11 km area. Analytics counts features only.',
     area_tarea: 'tareas', area_ha: 'hectares', area_acre: 'acres', area_m2: 'm²',
+    today_title: "Today's decision", d_spray_now: 'Spray now', d_spray_at: 'Spray {w}', d_no_spray: "Don't spray today", d_why_ok: 'Low wind, no rain for 6 hours', d_not_now: 'Not now: {b}',
+    tile_water: 'Water', tile_fungus: 'Fungus', tile_near: 'Nearby', w_skip: 'No', w_light: 'Light', w_irrigate: 'Yes', near_n: '{n} alerts', near_none: 'Calm',
+    alerts_line: '{n} alerts within {km} km · {top} ×{c}', mk_median: 'Median · {km} km · {d} days', mk_best_title: 'Best buyer',
+    f_progress: 'day {d} of {t}', f_harvest: 'Harvest in about {w} weeks', f_ready: 'Ready to harvest', f_perennial: 'Perennial · {age}', f_profit: 'Profit this month: {m}',
+    map_all: 'All', map_mine: 'My crops', dx_tap: 'Tap a step to add it to your tasks', dx_added: 'Added to tasks',
     err_generic: 'Something went wrong: {msg}', ago_min: '{n} min ago', ago_h: '{n} h ago', ago_d: '{n} days ago', now: 'just now',
   },
   es: {
@@ -139,6 +144,11 @@ const S = {
     s_rc: 'Ajustes en vivo (Remote Config, {src})', s_account: 'Cuenta', s_anon: 'Usas Conuco sin cuenta. Tus datos están en este dispositivo y en tu espacio privado de Firebase.', s_link: 'Guardar mi finca en una cuenta de correo', s_linked: 'Conectado como {email}', s_signout: 'Cerrar sesión',
     s_sample: 'Agregar finca de ejemplo', s_sample_done: 'Finca de ejemplo agregada.', s_privacy: 'Privacidad', s_privacy_text: 'Las fotos se quedan en tu teléfono salvo que aceptes una segunda opinión. Los precios y puntos de brotes compartidos no tienen nombres y solo indican una zona de 11 km. Analytics solo cuenta funciones.',
     area_tarea: 'tareas', area_ha: 'hectáreas', area_acre: 'acres', area_m2: 'm²',
+    today_title: 'Decisión de hoy', d_spray_now: 'Fumiga ahora', d_spray_at: 'Fumiga {w}', d_no_spray: 'No fumigues hoy', d_why_ok: 'Poco viento, sin lluvia por 6 horas', d_not_now: 'Ahora no: {b}',
+    tile_water: 'Riego', tile_fungus: 'Hongos', tile_near: 'Cerca', w_skip: 'No', w_light: 'Ligero', w_irrigate: 'Sí', near_n: '{n} alertas', near_none: 'Tranquilo',
+    alerts_line: '{n} alertas a {km} km · {top} ×{c}', mk_median: 'Mediana · {km} km · {d} días', mk_best_title: 'Mejor comprador',
+    f_progress: 'día {d} de {t}', f_harvest: 'Cosecha en unas {w} semanas', f_ready: 'Lista para cosechar', f_perennial: 'Perenne · {age}', f_profit: 'Ganancia del mes: {m}',
+    map_all: 'Todos', map_mine: 'Mis cultivos', dx_tap: 'Toca un paso para añadirlo a tus tareas', dx_added: 'Añadido a tareas',
     err_generic: 'Algo salió mal: {msg}', ago_min: 'hace {n} min', ago_h: 'hace {n} h', ago_d: 'hace {n} días', now: 'ahora mismo',
   },
 };

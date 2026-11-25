@@ -3,6 +3,7 @@ package com.petiht.conuco.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -25,6 +26,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.petiht.conuco.*
@@ -103,17 +106,36 @@ private fun DiagCard(d: Ai.Diagnosis, second: Boolean, s: AppState, a: Actions) 
     CCard(border = if (second) c.cloud else c.line) {
         Row(verticalAlignment = Alignment.CenterVertically) { SourceBadge(d.source, d.ms); Spacer(Modifier.weight(1f)); if (second) Muted(tr("second"), 12) }
         if (!d.isPlant) { Text(tr("not_plant")); return@CCard }
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Dot(Color(Crops.CAT_COLOR[d.category] ?: 0xFF57534E), 14); Text(d.problem.ifBlank { tr("cat_${d.category}") }, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            val ring = when { d.confidence >= 0.75 -> c.green; d.confidence >= 0.5 -> c.amber; else -> c.red }
+            Box(Modifier.size(68.dp).semantics { contentDescription = "${tr("confidence")} ${(d.confidence * 100).toInt()}%" }, contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(progress = { d.confidence.toFloat() }, modifier = Modifier.fillMaxSize(), strokeWidth = 7.dp, color = ring, trackColor = c.surface)
+                Text("${(d.confidence * 100).toInt()}%", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(d.problem.ifBlank { tr("cat_${d.category}") }, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, lineHeight = 26.sp)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Pill(tr("cat_${d.category}"), Color(Crops.CAT_COLOR[d.category] ?: 0xFF57534E), c.surface)
+                    if (!d.healthy) Pill(tr("sev_${d.severity}"), when (d.severity) { "high" -> c.red; "low" -> c.green; else -> c.amber }, when (d.severity) { "high" -> c.redSoft; "low" -> c.greenSoft; else -> c.sunSoft })
+                }
+            }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Pill(tr("cat_${d.category}"), c.ink, c.surface)
-            if (!d.healthy) Pill(tr("sev_${d.severity}"), when (d.severity) { "high" -> c.red; "low" -> c.green; else -> c.amber }, when (d.severity) { "high" -> c.redSoft; "low" -> c.greenSoft; else -> c.sunSoft })
-        }
-        Text("${tr("confidence")} ${(d.confidence * 100).toInt()}%", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-        LinearProgressIndicator(progress = { d.confidence.toFloat() }, modifier = Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(99.dp)), color = c.green, trackColor = c.surface)
         if (d.signs.isNotEmpty()) { Text(tr("signs").uppercase(), color = c.muted, fontSize = 12.sp, fontWeight = FontWeight.Bold); d.signs.forEach { Text("• $it") } }
-        if (d.actions.isNotEmpty()) { Text(tr("do_now").uppercase(), color = c.muted, fontSize = 12.sp, fontWeight = FontWeight.Bold); d.actions.forEachIndexed { i, x -> Text("${i + 1}. $x", fontWeight = FontWeight.SemiBold) } }
+        if (d.actions.isNotEmpty()) {
+            Text(tr("do_now").uppercase(), color = c.muted, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            var added by remember(d) { mutableStateOf(setOf<Int>()) }
+            d.actions.forEachIndexed { i, x ->
+                val on = i in added
+                Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(if (on) c.greenSoft else c.surface)
+                    .clickable(enabled = !on) { added = added + i; a.addTask(x) }.padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Icon(if (on) Icons.Outlined.CheckCircle else Icons.Outlined.RadioButtonUnchecked, null, tint = c.green, modifier = Modifier.size(22.dp))
+                    Text(x, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+                    if (on) Muted(tr("dx_added"), 11)
+                }
+            }
+            Muted(tr("dx_tap"), 12)
+        }
         if (d.prevent.isNotEmpty()) { Text(tr("prevent").uppercase(), color = c.muted, fontSize = 12.sp, fontWeight = FontWeight.Bold); d.prevent.forEach { Text("• $it") } }
         if (d.seeExpert) Note(tr("expert"), warn = true, icon = Icons.Outlined.Groups)
         if (d.filtered) Note(tr("filtered"), icon = Icons.Outlined.Shield)

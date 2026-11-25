@@ -24,6 +24,9 @@ export const CROP_KEYS = Object.keys(CROPS);
 export const cropName = (key, lang) => (CROPS[key] ? CROPS[key][lang === 'es' ? 'es' : 'en'] : key || '');
 
 /** Units people actually sell in (quintal = 100 lb, racimo = bunch, tarea = DR land unit). */
+/** Typical days from planting to (first) harvest, for the Finca progress ring. Perennials have none. */
+export const CYCLE_DAYS = { plantain: 330, banana: 300, cassava: 300, beans: 75, rice: 120, maize: 110, tomato: 90, pepper: 100, onion: 120, potato: 100, sweet_potato: 120, pineapple: 450, pigeon_pea: 180 };
+
 export const PRICE_UNITS = ['lb', 'kg', 'quintal', 'unit', 'bunch', 'sack', 'dozen', 'box'];
 
 /** Country → currency for the market board. Unknown countries fall back to USD. */

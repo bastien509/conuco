@@ -2,7 +2,7 @@
 import { onAuthStateChanged, signInAnonymously, signInWithEmailAndPassword, createUserWithEmailAndPassword, EmailAuthProvider, linkWithCredential, signOut } from 'firebase/auth';
 import { auth, settings, loadRemoteConfig, track, trackUser } from './firebase.js';
 import { t, setLang, getLang, guessLang } from './i18n.js';
-import { CROPS, CROP_KEYS, cropName, PRICE_UNITS, currencyFor, AREA_UNITS, CATEGORIES, CAT_COLOR, problemName } from './crops.js';
+import { CROPS, CROP_KEYS, cropName, PRICE_UNITS, currencyFor, AREA_UNITS, CATEGORIES, CAT_COLOR, CYCLE_DAYS, problemName } from './crops.js';
 import { analyseWeather, weatherTasks, SYMPTOMS, symptomGuide } from './rules.js';
 import { getWeather, cachedWeather, searchPlace, sky, coarse } from './weather.js';
 import { preparePhoto } from './image.js';
@@ -18,7 +18,7 @@ function h(tag, attrs, ...kids) {
     if (k === 'class') el.className = v;
     else if (k === 'text') el.textContent = v;
     else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
-    else if (k === 'style') Object.assign(el.style, v);
+    else if (k === 'style') for (const [sk, sv] of Object.entries(v)) { if (sv == null) continue; if (sk.startsWith('--')) el.style.setProperty(sk, sv); else el.style[sk] = sv; }
     else if (v === true) el.setAttribute(k, '');
     else el.setAttribute(k, v);
   }
@@ -387,10 +387,24 @@ function viewToday() {
       h('span', { class: 'temps' }, h('b', { text: `${Math.round(d.tmax)}°` }), ` ${Math.round(d.tmin)}°`),
       h('span', { class: 'rain', text: `${Math.round(d.rain)} mm` })));
     const spray = a.spray;
-    const sprayLine = spray.okNow ? t('t_spray_ok') : spray.windows[0] ? t('t_spray_next', { when: windowText(spray.windows[0]), h: spray.windows[0].hours }) : t('t_spray_none');
     const blockers = spray.blockers.map((b) => t(`b_${b.code}`, b)).join(' · ');
     const irr = a.irrigation;
-    fill(wx, 
+    const w0 = spray.windows[0];
+    const alertsN = store.outbreakAlerts(state.outbreaks || [], { lat: p.lat, lng: p.lng, radiusKm: settings.outbreakRadiusKm, min: settings.outbreakAlertMin, crops: p.crops });
+    const tone = (v, good, mid) => (v === good ? 'good' : v === mid ? 'mid' : 'bad');
+    const tile = (ic, title, value, tn, href) => h(href ? 'a' : 'div', { class: `tile ${tn}`, href }, icon(ic), h('small', { text: title }), h('strong', { text: value }));
+    fill(wx,
+      h('div', { class: `hero-decision ${spray.okNow || w0 ? 'go' : 'wait'}` },
+        h('small', {}, icon('spray'), t('today_title')),
+        h('strong', { text: spray.okNow ? t('d_spray_now') : w0 ? t('d_spray_at', { w: windowText(w0) }) : t('d_no_spray') }),
+        h('span', { text: spray.okNow || (w0 && !blockers) ? t('d_why_ok') : w0 ? t('d_not_now', { b: blockers }) : (blockers || t('t_spray_none')) })),
+      h('div', { class: 'tiles' },
+        tile('drop', t('tile_water'), t(`w_${irr.advice}`), tone(irr.advice, 'skip', 'light')),
+        tile('leaf', t('tile_fungus'), t(`lvl_${a.disease.level}`), tone(a.disease.level, 'low', 'medium')),
+        tile('pin', t('tile_near'), alertsN.length ? t('near_n', { n: alertsN.length }) : t('near_none'), alertsN.length ? 'bad' : 'good', '#map')),
+      h('p', { class: 'muted small', text: `${t('t_water_detail', { use: irr.cropUse, rain: irr.rainEff })} · ${t('t_disease_detail', { h: a.disease.wetHours })}` }),
+      alertsN.length ? h('a', { class: 'alert-line', href: '#map' }, icon('alert'),
+        h('span', { text: t('alerts_line', { n: alertsN.length, km: settings.outbreakRadiusKm, top: problemName(alertsN[0].problemKey, getLang()), c: alertsN[0].n }) }), h('b', { text: '›' })) : null,
       h('div', { class: 'card weather' },
         h('div', { class: 'now' },
           h('div', { class: 'big', text: a.now ? `${Math.round(a.now.temp)}°C` : '–' }),
@@ -400,10 +414,6 @@ function viewToday() {
             h('span', {}, icon('cloud'), `${t('t_rain')} ${a.now?.prob ?? '–'}%`)),
           h('p', { class: 'muted small' }, icon('pin'), ` ${p.place} · `, state.wxFrom === 'offline-cache' ? t('t_cached') : t('t_updated', { ago: ago(a.updated) }))),
         h('div', { class: 'days' }, days)),
-      h('div', { class: 'decisions' },
-        decision('spray', t('t_spray'), sprayLine, blockers, spray.okNow ? 'good' : spray.windows[0] ? 'mid' : 'bad'),
-        decision('drop', t('t_water'), t(`t_${irr.advice}`), t('t_water_detail', { use: irr.cropUse, rain: irr.rainEff }), irr.advice === 'skip' ? 'good' : irr.advice === 'light' ? 'mid' : 'bad'),
-        decision('leaf', t('t_disease'), t(`lvl_${a.disease.level}`), t('t_disease_detail', { h: a.disease.wetHours }), a.disease.level === 'low' ? 'good' : a.disease.level === 'medium' ? 'mid' : 'bad')),
       a.heat ? h('div', { class: 'note warn' }, icon('alert'), t('t_heat', { t: a.heat.maxT, d: a.heat.days })) : null,
       a.storm ? h('div', { class: 'note warn' }, icon('alert'), t('t_storm', { mm: a.storm.mm, date: fmtDay(a.storm.date) })) : null,
     );
@@ -450,18 +460,16 @@ function viewToday() {
   const drawAlerts = () => {
     const rows = state.outbreaks || [];
     const list = store.outbreakAlerts(rows, { lat: p.lat, lng: p.lng, radiusKm: settings.outbreakRadiusKm, min: settings.outbreakAlertMin, crops: p.crops });
-    fill(alerts, list.length ? h('a', { class: 'card alert', href: '#map' },
-      h('h2', {}, icon('alert'), t('t_alerts')),
-      h('ul', {}, list.slice(0, 3).map((x) => h('li', {}, h('i', { class: 'dot', style: { background: CAT_COLOR[x.category] } }),
-        t('t_alert_line', { problem: problemName(x.problemKey, getLang()), crop: cropName(x.crop, getLang()), n: x.n, km: settings.outbreakRadiusKm }))))) : '');
+    fill(alerts, list.length && !state.analysis ? h('a', { class: 'alert-line', href: '#map' }, icon('alert'),
+      h('span', { text: t('alerts_line', { n: list.length, km: settings.outbreakRadiusKm, top: problemName(list[0].problemKey, getLang()), c: list[0].n }) }), h('b', { text: '›' })) : '');
   };
-  live.set('weather', drawWeather); live.set('tasks', drawTasks); live.set('alerts', drawAlerts);
+  live.set('weather', drawWeather); live.set('tasks', drawTasks); live.set('alerts', () => { drawAlerts(); drawWeather(); });
   drawWeather(); drawTasks(); drawAlerts();
   return h('section', { class: 'page' },
     h('header', { class: 'pagehead' },
       h('h1', { text: p.name ? t('t_hello', { part, name: p.name }) : t('t_hello_anon', { part }) }),
       h('button', { class: 'btn ghost sm', type: 'button', onclick: () => refreshWeather(true), 'aria-label': 'refresh' }, icon('sync'))),
-    alerts, wx, brief, tasks);
+    wx, alerts, brief, tasks);
 }
 
 function decision(ic, title, main, detail, tone) {
@@ -585,12 +593,23 @@ function diagCard(res, kind) {
   return h('div', { class: `card diag ${kind}` },
     h('div', { class: 'row between' }, badge(res.source), h('small', { class: 'muted', text: t('ms', { s: (res.ms / 1000).toFixed(1) }) })),
     kind === 'second' ? h('h4', { class: 'kicker', text: t('d_second') }) : null,
-    h('h2', {}, h('i', { class: 'dot', style: { background: CAT_COLOR[d.category] } }), d.problemKey && d.problemKey !== 'other' ? problemName(d.problemKey, getLang()) : (d.problem || t(`cat_${d.category}`))),
-    h('div', { class: 'row wrap' }, h('span', { class: 'pill', text: t(`cat_${d.category}`) }), d.healthy ? null : sev),
-    h('div', { class: 'meter', role: 'meter', 'aria-valuenow': String(Math.round(d.confidence * 100)), 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-label': t('d_conf') },
-      h('span', { class: 'label', text: `${t('d_conf')} ${Math.round(d.confidence * 100)}%` }), h('i', { style: { width: `${Math.round(d.confidence * 100)}%` } })),
+    h('div', { class: 'diag-head' },
+      h('div', { class: `ring ${d.confidence >= 0.75 ? 'good' : d.confidence >= 0.5 ? 'mid' : 'bad'}`, role: 'meter', 'aria-valuenow': String(Math.round(d.confidence * 100)), 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-label': t('d_conf'),
+        style: { '--p': `${Math.round(d.confidence * 100)}` } }, h('b', { text: `${Math.round(d.confidence * 100)}%` })),
+      h('div', {},
+        h('h2', { text: d.problemKey && d.problemKey !== 'other' ? problemName(d.problemKey, getLang()) : (d.problem || t(`cat_${d.category}`)) }),
+        h('div', { class: 'row wrap' }, h('span', { class: 'pill', style: { color: CAT_COLOR[d.category] }, text: t(`cat_${d.category}`) }), d.healthy ? null : sev))),
     d.signs.length ? h('div', {}, h('h4', { text: t('d_signs') }), h('ul', {}, d.signs.map((s) => h('li', { text: s })))) : null,
-    d.actions.length ? h('div', {}, h('h4', { text: t('d_actions') }), h('ol', { class: 'actions' }, d.actions.map((s) => h('li', { text: s })))) : null,
+    d.actions.length ? h('div', {}, h('h4', { text: t('d_actions') }),
+      h('div', { class: 'checklist' }, d.actions.map((s) => {
+        const b = h('button', { type: 'button', class: 'check-step' }, h('i', { class: 'box' }), h('span', { text: s }));
+        b.addEventListener('click', () => {
+          if (b.classList.contains('on')) return;
+          b.classList.add('on'); b.append(h('small', { text: t('dx_added') }));
+          store.upsertTask(state.user.uid, { id: `doc-${Date.now()}`, code: 'doctor', text: s, from: 'doctor' });
+        });
+        return b;
+      })), h('p', { class: 'muted small', text: t('dx_tap') })) : null,
     d.prevent.length ? h('div', {}, h('h4', { text: t('d_prevent') }), h('ul', {}, d.prevent.map((s) => h('li', { text: s })))) : null,
     d.seeExpert ? h('p', { class: 'note warn' }, icon('people'), t('d_expert')) : null,
     d.filtered ? h('p', { class: 'note' }, icon('shield'), t('d_filtered')) : null,
@@ -696,19 +715,47 @@ function viewMarket() {
   const p = state.profile;
   const cur = currency();
   const board = h('div', { class: 'stack' });
+  let pick = p.crops?.[0];
   const draw = () => {
     if (!state.prices) { fill(board, h('div', { class: 'card busy' }, h('span', { class: 'spin' }))); return; }
     const rows = store.priceBoard(state.prices, { lat: p.lat, lng: p.lng, radiusKm: Math.max(settings.outbreakRadiusKm, 60), currency: cur, windowDays: settings.priceWindowDays });
     const mine = new Set(p.crops || []);
     rows.sort((a, b) => Number(mine.has(b.crop)) - Number(mine.has(a.crop)));
-    fill(board, 
+    if (!rows.length) { fill(board, navigator.onLine ? null : h('p', { class: 'note', text: t('mk_offline') }), h('p', { class: 'card muted', text: t('mk_none') })); return; }
+    const crops = [...new Set(rows.map((r) => r.crop))];
+    if (!crops.includes(pick)) pick = crops[0];
+    const radiusKm = Math.max(settings.outbreakRadiusKm, 60);
+    const spark = (r) => {
+      const byDay = {};
+      state.prices.filter((x) => x.crop === r.crop && x.unit === r.unit && x.currency === cur && store.distanceKm([p.lat, p.lng], store.cellCenter(x.cell)) <= radiusKm)
+        .forEach((x) => { (byDay[x.day] ||= []).push(x.price); });
+      const pts = Object.keys(byDay).sort().slice(-14).map((k) => { const l = byDay[k].sort((a, b) => a - b); const m = l.length >> 1; return l.length % 2 ? l[m] : (l[m - 1] + l[m]) / 2; });
+      if (pts.length < 2) return null;
+      const lo = Math.min(...pts), hi = Math.max(...pts), span = hi - lo || 1;
+      const xy = pts.map((v, i) => `${(i / (pts.length - 1)) * 100},${40 - ((v - lo) / span) * 32 - 4}`);
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 100 40'); svg.setAttribute('preserveAspectRatio', 'none'); svg.setAttribute('class', `spark ${r.trend < -2 ? 'down' : ''}`); svg.setAttribute('aria-hidden', 'true');
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      line.setAttribute('points', xy.join(' ')); line.setAttribute('vector-effect', 'non-scaling-stroke');
+      svg.append(line);
+      return svg;
+    };
+    const chips = h('div', { class: 'chips' }, crops.map((k) => h('button', { type: 'button', class: `pick ${k === pick ? 'on' : ''}`, onclick: () => { pick = k; draw(); } },
+      h('i', { class: 'dot', style: { background: CROPS[k]?.color } }), cropName(k, getLang()))));
+    fill(board,
       navigator.onLine ? null : h('p', { class: 'note', text: t('mk_offline') }),
-      rows.length ? h('div', { class: 'prices' }, rows.map((r) => h('div', { class: `price ${mine.has(r.crop) ? 'mine' : ''}` },
-        h('div', { class: 'row between' }, h('strong', {}, h('i', { class: 'dot', style: { background: CROPS[r.crop]?.color } }), cropName(r.crop, getLang())), h('small', { class: 'muted', text: `/ ${t(`unit_${r.unit}`)}` })),
-        h('div', { class: 'pbig', text: money(r.median, cur) }),
-        h('small', {}, `${t('mk_reports', { n: r.n })} · ${t('mk_range', { min: money(r.min, cur), max: money(r.max, cur) })}`),
-        r.trend == null ? null : h('small', { class: r.trend > 2 ? 'up' : r.trend < -2 ? 'down' : '', text: r.trend > 2 ? t('mk_trend_up', { p: r.trend }) : r.trend < -2 ? t('mk_trend_down', { p: -r.trend }) : t('mk_trend_flat') }),
-        r.best && r.n > 1 ? h('small', { class: 'best' }, icon('pin'), t('mk_best', { market: r.best.market, price: money(r.best.median, cur) })) : null))) : h('p', { class: 'card muted', text: t('mk_none') }));
+      chips,
+      ...rows.filter((r) => r.crop === pick).flatMap((r) => [
+        h('div', { class: 'card price-hero' },
+          h('div', { class: 'row between' }, h('small', { class: 'muted', text: t('mk_median', { km: radiusKm, d: settings.priceWindowDays }) }), h('small', { class: 'muted', text: `/ ${t(`unit_${r.unit}`)}` })),
+          h('div', { class: 'row between' }, h('div', { class: 'pbig', text: money(r.median, cur) }),
+            r.trend == null ? null : h('strong', { class: r.trend > 2 ? 'up' : r.trend < -2 ? 'down' : 'muted', text: r.trend > 2 ? `▲ ${r.trend}%` : r.trend < -2 ? `▼ ${-r.trend}%` : t('mk_trend_flat') })),
+          spark(r),
+          h('small', { class: 'muted', text: `${t('mk_reports', { n: r.n })} · ${t('mk_range', { min: money(r.min, cur), max: money(r.max, cur) })}` })),
+        r.best && r.n > 1 ? h('div', { class: 'best-buyer' }, icon('scale'), h('div', {}, h('small', { text: t('mk_best_title') }), h('strong', { text: r.best.market })), h('b', { text: money(r.best.median, cur) })) : null,
+      ]),
+      h('div', { class: 'others' }, rows.filter((r) => r.crop !== pick).map((r) => h('button', { type: 'button', class: 'other-row', onclick: () => { pick = r.crop; draw(); } },
+        h('i', { class: 'dot', style: { background: CROPS[r.crop]?.color } }), h('span', { text: cropName(r.crop, getLang()) }), h('b', { text: money(r.median, cur) }), h('small', { class: 'muted', text: `/ ${t(`unit_${r.unit}`)}` })))));
   };
   live.set('market', draw);
   draw();
@@ -739,8 +786,8 @@ function viewMarket() {
     h('header', { class: 'pagehead' }, h('h1', { text: t('mk_title') })),
     h('p', { class: 'lead', text: t('mk_sub', { d: settings.priceWindowDays, km: Math.max(settings.outbreakRadiusKm, 60) }) }),
     board,
-    h('div', { class: 'card stack' },
-      h('h2', {}, icon('scale'), t('mk_report')),
+    h('details', { class: 'card stack report' },
+      h('summary', { class: 'btn primary' }, icon('plus'), t('mk_report')),
       cropChips(f.crop, (v) => { f.crop = v; }, { only: [...new Set([...(p.crops || []), ...CROP_KEYS.filter((k) => k !== 'other')])].slice(0, 12) }),
       h('div', { class: 'row wrap' },
         h('label', { class: 'grow' }, `${t('mk_price')} (${cur})`, price),
@@ -754,8 +801,13 @@ function viewMap() {
   const p = state.profile;
   const mapEl = h('div', { class: 'map', id: 'map' });
   const list = h('div', { class: 'card' });
+  let mineOnly = false;
+  const filt = h('div', { class: 'chips' });
+  const drawFilter = () => fill(filt, [['all', t('map_all')], ['mine', t('map_mine')]].map(([k, label]) => h('button', { type: 'button', class: `pick ${(k === 'mine') === mineOnly ? 'on' : ''}`,
+    onclick: () => { mineOnly = k === 'mine'; drawFilter(); draw(); } }, label)));
+  drawFilter();
   const draw = () => {
-    const rows = state.outbreaks || [];
+    const rows = (state.outbreaks || []).filter((r) => !mineOnly || p.crops?.includes(r.crop));
     const near = rows.filter((r) => store.distanceKm([p.lat, p.lng], [r.lat, r.lng]) <= settings.outbreakRadiusKm);
     if (navigator.onLine) {
       import('./map.js').then((m) => m.showMap(mapEl, { lat: p.lat, lng: p.lng, rows, lang: getLang(), radiusKm: settings.outbreakRadiusKm })).catch(() => {});
@@ -772,6 +824,7 @@ function viewMap() {
   return h('section', { class: 'page' },
     h('header', { class: 'pagehead' }, h('h1', { text: t('mp_title') })),
     h('p', { class: 'lead', text: t('mp_sub') }),
+    filt,
     mapEl,
     h('div', { class: 'legend' }, CATEGORIES.filter((c) => c !== 'healthy').map((c) => h('span', {}, h('i', { class: 'dot', style: { background: CAT_COLOR[c] } }), t(`cat_${c}`)))),
     list);
@@ -792,9 +845,15 @@ function viewFarm() {
       h('div', { id: 'plotform' }),
       state.plots.length ? h('ul', { class: 'plots' }, state.plots.map((x) => {
         const age = x.planted ? Math.max(0, Math.round((Date.now() - new Date(`${x.planted}T12:00`)) / 86400000)) : null;
-        return h('li', {}, h('i', { class: 'dot', style: { background: CROPS[x.crop]?.color } }),
-          h('span', {}, h('strong', { text: x.name }), ` · ${cropName(x.crop, getLang())}`),
-          h('small', { text: [x.area ? `${Math.round((x.area / AREA_UNITS[unit]) * 10) / 10} ${t(`area_${unit}`)}` : '', age != null ? (age >= 365 ? `${Math.floor(age / 365)} ${getLang() === 'es' ? 'años' : 'yr'}` : t('f_age', { d: age })) : ''].filter(Boolean).join(' · ') }));
+        const cycle = CYCLE_DAYS[x.crop];
+        const frac = cycle && age != null ? Math.min(1, age / cycle) : null;
+        const ageText = age != null ? (age >= 365 ? `${Math.floor(age / 365)} ${getLang() === 'es' ? 'años' : 'yr'}` : t('f_age', { d: age })) : '';
+        const line = age == null ? '' : !cycle ? t('f_perennial', { age: ageText }) : age >= cycle ? t('f_ready') : `${t('f_progress', { d: age, t: cycle })} · ${t('f_harvest', { w: Math.ceil((cycle - age) / 7) })}`;
+        return h('li', { class: 'plot' },
+          h('div', { class: `ring sm ${frac == null ? 'perennial' : frac >= 1 ? 'mid' : 'good'}`, style: { '--p': `${frac == null ? 100 : Math.round(frac * 100)}`, '--c': frac == null ? CROPS[x.crop]?.color : null } }, h('b', { text: frac == null ? '∞' : `${Math.round(frac * 100)}%` })),
+          h('div', {}, h('strong', { text: x.name }),
+            h('small', { class: 'muted', text: [cropName(x.crop, getLang()), x.area ? `${Math.round((x.area / AREA_UNITS[unit]) * 10) / 10} ${t(`area_${unit}`)}` : ''].filter(Boolean).join(' · ') }),
+            line ? h('small', { class: frac != null && frac >= 1 ? 'p-ready' : 'p-grow', text: line }) : null));
       })) : h('p', { class: 'muted', text: t('f_no_plots') }));
   };
   const plotForm = () => {
@@ -825,7 +884,8 @@ function viewFarm() {
     const earned = inMonth.filter((x) => x.kind === 'sell').reduce((s, x) => s + (x.money || 0), 0);
     const spent = inMonth.filter((x) => x.kind !== 'sell').reduce((s, x) => s + (x.money || 0), 0);
     fill(totals, h('div', {}, h('small', { text: `${t('f_month')} · ${t('f_spent')}` }), h('strong', { text: money(spent, cur) })),
-      h('div', {}, h('small', { text: `${t('f_month')} · ${t('f_earned')}` }), h('strong', { class: 'up', text: money(earned, cur) })));
+      h('div', {}, h('small', { text: `${t('f_month')} · ${t('f_earned')}` }), h('strong', { class: 'up', text: money(earned, cur) })),
+      h('p', { class: `profit ${earned - spent >= 0 ? 'up' : 'down'}`, text: t('f_profit', { m: money(earned - spent, cur) }) }));
     const plotName = (id) => state.plots.find((x) => x.id === id)?.name || '';
     fill(logs, h('h2', {}, icon('book'), t('f_log')),
       logForm(),
@@ -850,7 +910,7 @@ function viewFarm() {
       logDraft.kind = k; kinds.querySelectorAll('.pick').forEach((b) => b.classList.remove('on')); e.currentTarget.classList.add('on');
     } }, t(`k_${k}`))));
     let via = 'text';
-    return h('details', { class: 'sub' }, h('summary', { class: 'btn ghost sm' }, icon('plus'), t('f_add_log')),
+    return h('details', { class: 'sub', id: 'logform' }, h('summary', { class: 'btn ghost sm' }, icon('plus'), t('f_add_log')),
       h('div', { class: 'stack' },
         h('span', { class: 'label', text: t('f_kind') }), kinds,
         h('div', { class: 'field' }, h('span', { class: 'label', text: t('f_note') }), h('div', { class: 'row' }, note, dictateButton(note, () => { via = 'voice'; }))),
@@ -864,7 +924,12 @@ function viewFarm() {
   live.set('plots', () => { drawPlots(); drawLogs(); });
   live.set('logs', drawLogs);
   drawPlots(); drawLogs();
-  return h('section', { class: 'page' }, h('header', { class: 'pagehead' }, h('h1', { text: t('f_title') })), totals, plots, logs);
+  const dictateBig = h('button', { class: 'btn primary lg wide', type: 'button' }, icon('mic'), t('f_dictate'));
+  dictateBig.addEventListener('click', async () => {
+    const form = logs.querySelector('#logform');
+    if (form) { form.open = true; form.querySelector('textarea')?.focus(); form.querySelector('button.mic')?.click(); }
+  });
+  return h('section', { class: 'page' }, h('header', { class: 'pagehead' }, h('h1', { text: t('f_title') })), totals, canListen() ? dictateBig : null, plots, logs);
 }
 
 // ---------- Ask ----------

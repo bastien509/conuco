@@ -47,4 +47,4 @@ fun money(n: Double, cur: String, lang: String): String = runCatching {
 
 @Composable
 internal fun Page(content: @Composable ColumnScope.() -> Unit) =
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp), content = content)
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 88.dp), verticalArrangement = Arrangement.spacedBy(14.dp), content = content)

@@ -3,9 +3,11 @@ package com.petiht.conuco.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -60,10 +62,11 @@ fun AskScreen(s: AppState, a: Actions, chat: MutableList<ChatMsg>) {
     Page {
         Text(tr("a_title"), style = MaterialTheme.typography.headlineMedium)
         Muted(tr("a_sub"))
-        if (chat.isEmpty()) listOf("ex1", "ex2", "ex3").forEach { k -> AssistChip(onClick = { if (k == "ex3") fresh = true; send(tr(k)) }, label = { Text(tr(k)) }) }
+        if (chat.isEmpty()) listOf("ex1", "ex2", "ex3").forEach { k -> AssistChip(onClick = { if (k == "ex3") fresh = true; send(tr(k)) }, label = { Text(tr(k)) }, shape = RoundedCornerShape(14.dp)) }
         chat.forEach { m ->
-            if (m.me) Text(m.text, Modifier.fillMaxWidth(0.85f).align(Alignment.End).clip(RoundedCornerShape(16.dp)).background(c.green).padding(12.dp), color = c.onGreen, fontWeight = FontWeight.SemiBold)
-            else CCard(border = if (m.error) c.red else null) {
+            if (m.me) Text(m.text, Modifier.fillMaxWidth(0.85f).align(Alignment.End).clip(RoundedCornerShape(18.dp, 18.dp, 4.dp, 18.dp)).background(c.green).padding(12.dp), color = c.onGreen, fontWeight = FontWeight.SemiBold)
+            else Column(Modifier.fillMaxWidth(0.94f).clip(RoundedCornerShape(18.dp, 18.dp, 18.dp, 4.dp)).background(c.card).border(1.dp, if (m.error) c.red else c.line, RoundedCornerShape(18.dp, 18.dp, 18.dp, 4.dp)).padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 m.reply?.let { r -> Row(verticalAlignment = Alignment.CenterVertically) { SourceBadge(if (r.grounded) "grounded" else r.source, r.ms, text = true); Spacer(Modifier.weight(1f)); IconButton(onClick = { a.speak(r.text) }) { Icon(Icons.Outlined.VolumeUp, tr("listen"), tint = c.green) } } }
                 Text(m.text, color = if (m.error) c.red else c.ink)
                 m.reply?.let { r ->
@@ -77,6 +80,12 @@ fun AskScreen(s: AppState, a: Actions, chat: MutableList<ChatMsg>) {
         OutlinedTextField(q, { q = it.take(600) }, Modifier.fillMaxWidth(), label = { Text(tr("a_hint")) },
             trailingIcon = { IconButton(onClick = { send(q) }) { Icon(Icons.Outlined.Send, tr("send"), tint = c.green) } })
         if (a.ai.grounding) Row(verticalAlignment = Alignment.CenterVertically) { Checkbox(fresh, { fresh = it }); Text(tr("fresh"), fontSize = 14.sp) }
-        BigButton(tr("speak"), Icons.Outlined.Mic) { a.dictate { t -> send(t) } }
+        Column(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Box(Modifier.size(84.dp).clip(CircleShape).background(c.greenSoft).padding(8.dp).clip(CircleShape).background(c.green)
+                .clickable(enabled = !busy) { a.dictate { t -> send(t) } }, contentAlignment = Alignment.Center) {
+                Icon(Icons.Outlined.Mic, tr("speak"), tint = c.onGreen, modifier = Modifier.size(34.dp))
+            }
+            Muted(tr("a_tap"), 13)
+        }
     }
 }

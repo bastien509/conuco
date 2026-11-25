@@ -80,6 +80,11 @@ object Crops {
         "fungus" to 0xFFC2410C, "bacteria" to 0xFFB91C1C, "virus" to 0xFFA16207, "pest" to 0xFF0F766E,
         "nutrient" to 0xFF4D7C0F, "water" to 0xFF1D4ED8, "healthy" to 0xFF15803D, "unknown" to 0xFF57534E,
     )
+    /** Typical days from planting to (first) harvest, for the Finca progress ring. Perennials (cacao, coffee, avocado, mango) have none. */
+    val CYCLE_DAYS = mapOf(
+        "plantain" to 330, "banana" to 300, "cassava" to 300, "beans" to 75, "rice" to 120, "maize" to 110, "tomato" to 90, "pepper" to 100,
+        "onion" to 120, "potato" to 100, "sweet_potato" to 120, "pineapple" to 450, "pigeon_pea" to 180,
+    )
     val PRICE_UNITS = listOf("lb", "kg", "quintal", "unit", "bunch", "sack", "dozen", "box")
     val AREA_UNITS = linkedMapOf("tarea" to 628.86, "ha" to 10000.0, "acre" to 4046.86, "m2" to 1.0)
     private val CURRENCY = mapOf(
