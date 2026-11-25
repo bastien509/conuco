@@ -50,6 +50,18 @@ object Strings {
         "sev_low" to "Mild", "sev_medium" to "Moderate", "sev_high" to "Severe", "err" to "Something went wrong: {m}",
         "unit_lb" to "pound", "unit_kg" to "kg", "unit_quintal" to "quintal", "unit_unit" to "unit", "unit_bunch" to "bunch", "unit_sack" to "sack", "unit_dozen" to "dozen", "unit_box" to "box",
         "area_tarea" to "tareas", "area_ha" to "ha", "area_acre" to "acres", "area_m2" to "m²",
+        "n_ch_alerts" to "Outbreak alerts", "n_ch_daily" to "Daily field plan",
+        "n_out_title" to "Outbreak near you", "n_out_body" to "{p} on {c}: {n} reports within {km} km.", "n_more" to "+{n} more nearby.",
+        "n_spray_title" to "Spray window", "n_spray_body" to "Good conditions: {w}. Low wind, no rain for 6 hours.",
+        "n_fungus_title" to "High fungus risk", "n_fungus_body" to "{h} very humid hours. Check your leaves today.",
+        "wg_spray" to "Spray {w}", "wg_nospray" to "Don't spray: no safe window in 48 h", "wg_sub" to "Water: {w} · Fungus: {f}",
+        "wg_open" to "Open Conuco to load the forecast", "wg_diag" to "Diagnose", "wg_ask" to "Ask",
+        "sh_text" to "Conuco diagnosis ({src}): {p} on {c}, confidence {pct}%.\nDo now: {a}\n\nConuco, the field assistant: petiht.com/conuco",
+        "sh_device" to "on this phone", "sh_cloud" to "cloud",
+        "cam_frame" to "Put one leaf inside the frame", "cam_sharp" to "Sharp", "cam_blur" to "Hold still, blurry", "cam_dark" to "Too dark",
+        "cam_bright" to "Too bright", "cam_ok" to "Light OK", "cam_private" to "The photo never leaves this phone", "cam_close" to "Close", "cam_flash" to "Flashlight", "cam_shoot" to "Take photo",
+        "s_alerts" to "Alerts", "s_alerts_on" to "Daily alerts", "s_alerts_d" to "Outbreaks near your crops, spray windows and fungus risk. Checked every 6 hours, also offline.",
+        "s_alerts_test" to "Check now", "s_alerts_test_ok" to "Checking. Alerts will appear in a moment.", "s_widget_add" to "Add widget to home screen", "s_widget" to "Tip: add the Conuco widget to your home screen to see today's decision.",
     )
     private val ES = mapOf(
         "today" to "Hoy", "doctor" to "Doctor", "market" to "Mercado", "map" to "Cerca", "farm" to "Finca", "ask" to "Pregunta", "settings" to "Ajustes",
@@ -98,6 +110,18 @@ object Strings {
         "sev_low" to "Leve", "sev_medium" to "Moderado", "sev_high" to "Grave", "err" to "Algo salió mal: {m}",
         "unit_lb" to "libra", "unit_kg" to "kg", "unit_quintal" to "quintal", "unit_unit" to "unidad", "unit_bunch" to "racimo", "unit_sack" to "saco", "unit_dozen" to "docena", "unit_box" to "caja",
         "area_tarea" to "tareas", "area_ha" to "ha", "area_acre" to "acres", "area_m2" to "m²",
+        "n_ch_alerts" to "Alertas de brotes", "n_ch_daily" to "Plan diario del campo",
+        "n_out_title" to "Brote cerca de ti", "n_out_body" to "{p} en {c}: {n} reportes a menos de {km} km.", "n_more" to "+{n} más cerca.",
+        "n_spray_title" to "Ventana para fumigar", "n_spray_body" to "Buenas condiciones: {w}. Poco viento, sin lluvia por 6 horas.",
+        "n_fungus_title" to "Riesgo alto de hongos", "n_fungus_body" to "{h} horas muy húmedas. Revisa las hojas hoy.",
+        "wg_spray" to "Fumiga {w}", "wg_nospray" to "No fumigues: sin ventana segura en 48 h", "wg_sub" to "Riego: {w} · Hongos: {f}",
+        "wg_open" to "Abre Conuco para cargar el clima", "wg_diag" to "Diagnosticar", "wg_ask" to "Preguntar",
+        "sh_text" to "Diagnóstico de Conuco ({src}): {p} en {c}, confianza {pct}%.\nHaz ahora: {a}\n\nConuco, el asistente del campo: petiht.com/conuco",
+        "sh_device" to "en este teléfono", "sh_cloud" to "nube",
+        "cam_frame" to "Pon una hoja dentro del marco", "cam_sharp" to "Nítida", "cam_blur" to "Quieto, está borrosa", "cam_dark" to "Poca luz",
+        "cam_bright" to "Mucha luz", "cam_ok" to "Buena luz", "cam_private" to "La foto no sale del teléfono", "cam_close" to "Cerrar", "cam_flash" to "Linterna", "cam_shoot" to "Tomar foto",
+        "s_alerts" to "Alertas", "s_alerts_on" to "Alertas diarias", "s_alerts_d" to "Brotes cerca de tus cultivos, ventanas para fumigar y riesgo de hongos. Se revisa cada 6 horas, también sin señal.",
+        "s_alerts_test" to "Revisar ahora", "s_alerts_test_ok" to "Revisando. Las alertas aparecerán en un momento.", "s_widget_add" to "Añadir widget a la pantalla de inicio", "s_widget" to "Consejo: añade el widget de Conuco a tu pantalla de inicio para ver la decisión del día.",
     )
     fun t(key: String, vararg vars: Pair<String, Any>): String {
         var s = (if (lang == "es") ES[key] else EN[key]) ?: EN[key] ?: key

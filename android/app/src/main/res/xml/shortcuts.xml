@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut android:shortcutId="diagnose" android:enabled="true" android:icon="@drawable/sc_camera"
+        android:shortcutShortLabel="@string/sc_diag_short" android:shortcutLongLabel="@string/sc_diag_long">
+        <intent android:action="android.intent.action.VIEW" android:data="conuco://tab/camera"
+            android:targetPackage="com.petiht.conuco" android:targetClass="com.petiht.conuco.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="ask" android:enabled="true" android:icon="@drawable/sc_mic"
+        android:shortcutShortLabel="@string/sc_ask_short" android:shortcutLongLabel="@string/sc_ask_long">
+        <intent android:action="android.intent.action.VIEW" android:data="conuco://tab/ask"
+            android:targetPackage="com.petiht.conuco" android:targetClass="com.petiht.conuco.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="map" android:enabled="true" android:icon="@drawable/sc_map"
+        android:shortcutShortLabel="@string/sc_map_short" android:shortcutLongLabel="@string/sc_map_long">
+        <intent android:action="android.intent.action.VIEW" android:data="conuco://tab/map"
+            android:targetPackage="com.petiht.conuco" android:targetClass="com.petiht.conuco.MainActivity" />
+    </shortcut>
+</shortcuts>

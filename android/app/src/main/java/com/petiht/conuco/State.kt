@@ -29,6 +29,9 @@ class AppState {
     var downloadPct by mutableStateOf<Int?>(null)
     var configSource by mutableStateOf("")
     var lang by mutableStateOf("es")
+    var tab by mutableStateOf("today")
+    var camera by mutableStateOf(false)
+    var alerts by mutableStateOf(true)
 }
 
 class Consent(val reason: String, val confidence: Double, val answer: kotlinx.coroutines.CompletableDeferred<Boolean>)
@@ -62,6 +65,10 @@ interface Actions {
     fun downloadNano()
     fun linkEmail(email: String, pass: String)
     fun signOut()
+    fun shareDiagnosis(crop: String, d: Ai.Diagnosis)
+    fun setAlerts(on: Boolean)
+    fun testAlerts()
+    fun pinWidget()
     fun seedSample()
     val ai: Ai
 }

@@ -45,8 +45,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.ai.ondevice.DownloadStatus
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
-import com.google.firebase.appcheck.appCheck
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.ListenerRegistration
@@ -76,13 +74,13 @@ class MainActivity : ComponentActivity(), Actions {
         r.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()?.let { onDictated?.invoke(it) }
         onDictated = null
     }
+    private val camPerm = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok -> if (ok) s.camera = true else legacyCamera() }
+    private val notifPerm = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok -> log("notif_permission", "granted" to if (ok) "1" else "0") }
     private val locPerm = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok -> if (ok) readLocation() else gpsCb?.invoke(null) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // App Check: Play Integrity attests every Firebase AI Logic call.
-        Firebase.appCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
         ai = Ai(applicationContext)
         weather = Weather(applicationContext)
         s.lang = if (Locale.getDefault().language == "es") "es" else "en"; Strings.lang = s.lang
@@ -108,7 +106,7 @@ class MainActivity : ComponentActivity(), Actions {
         setContent {
             ConucoTheme {
                 val c = cc
-                var tab by remember { mutableStateOf("today") }
+                var tab by s::tab
                 key(s.lang) {
                     Surface(Modifier.fillMaxSize(), color = c.surface) {
                         when {
@@ -138,6 +136,14 @@ class MainActivity : ComponentActivity(), Actions {
                                         }
                                     }
                                 }
+                                if (s.camera) {
+                                    BackHandler { s.camera = false }
+                                    CameraScreen(
+                                        onPhoto = { uri -> s.photo = Photos.load(this@MainActivity, uri); s.camera = false; log("camera_shot", "via" to "camerax") },
+                                        onGallery = { s.camera = false; pickPhoto() },
+                                        onClose = { s.camera = false },
+                                    )
+                                }
                             }
                         }
                     }
@@ -150,7 +156,18 @@ class MainActivity : ComponentActivity(), Actions {
                 }
             }
         }
+        handleIntent(intent)
+        s.alerts = Bg.alertsOn(this)
     }
+
+    /** Deep links from the widget, app shortcuts and notifications: conuco://tab/{today|doctor|camera|market|map|farm|ask}. */
+    private fun handleIntent(i: Intent?) {
+        val t = i?.data?.takeIf { it.scheme == "conuco" }?.lastPathSegment ?: i?.getStringExtra("tab") ?: return
+        if (t == "camera") { s.tab = "doctor"; openCamera() }
+        else if (t in setOf("today", "doctor", "market", "map", "farm", "ask")) s.tab = t
+        log("deep_link", "tab" to t)
+    }
+    override fun onNewIntent(intent: Intent) { super.onNewIntent(intent); handleIntent(intent) }
 
     @Composable
     private fun NavBar(tab: String, go: (String) -> Unit) {
@@ -226,6 +243,8 @@ class MainActivity : ComponentActivity(), Actions {
         listeners += r.watchDiagnoses { s.diags = it }
         listeners += r.watchTasks { s.tasks = it; s.tasksLoaded = true; addWeatherTasks() }
         val p = s.profile ?: return
+        Bg.saveSnapshot(this, p, ai.sprayMaxWind, ai.outbreakRadiusKm, ai.outbreakAlertMin)
+        askNotifications()
         weather.cached(p.lat, p.lng)?.let { s.analysis = Rules.analyse(it, p.crops, ai.sprayMaxWind); s.wxFrom = "cache" }
         refreshWeather(false)
         lifecycleScope.launch { loadCommunity() }
@@ -242,6 +261,7 @@ class MainActivity : ComponentActivity(), Actions {
         val p = s.profile ?: return
         lifecycleScope.launch {
             weather.get(p.lat, p.lng, ai.online(), force)?.let { r -> s.analysis = Rules.analyse(r.json, p.crops, ai.sprayMaxWind); s.wxFrom = r.from; addWeatherTasks() }
+            s.analysis?.let { Bg.updateWidget(applicationContext, it, p.place.substringBefore(',').trim(), s.lang) }
             if (force) loadCommunity()
         }
     }
@@ -297,8 +317,14 @@ class MainActivity : ComponentActivity(), Actions {
         startWatching()
         log("onboarding_done", "crops" to p.crops.size.toString())
         if (sample) lifecycleScope.launch { runCatching { r.seedSample() } }
+        Bg.runNow(this)
     }
     override fun openCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) s.camera = true
+        else camPerm.launch(Manifest.permission.CAMERA)
+    }
+    /** Fallback when the camera permission is refused: the system camera app writes into our cache, no permission needed. */
+    private fun legacyCamera() {
         val dir = File(cacheDir, "photos").apply { mkdirs() }
         val f = File(dir, "leaf.jpg")
         photoUri = FileProvider.getUriForFile(this, "com.petiht.conuco.files", f)
@@ -370,6 +396,7 @@ class MainActivity : ComponentActivity(), Actions {
     }
     override fun saveProfile(p: Profile) {
         repo?.saveProfile(p); s.profile = p; s.lang = p.lang; Strings.lang = p.lang
+        Bg.saveSnapshot(this, p, ai.sprayMaxWind, ai.outbreakRadiusKm, ai.outbreakAlertMin)
         refreshWeather(true); s.toast = tr("saved")
     }
     override fun downloadNano() {
@@ -392,6 +419,43 @@ class MainActivity : ComponentActivity(), Actions {
         val u = Firebase.auth.currentUser ?: return
         lifecycleScope.launch { runCatching { u.linkWithCredential(EmailAuthProvider.getCredential(email, pass)).await(); s.anonymous = false; s.email = email; s.toast = tr("saved") }
             .onFailure { s.toast = tr("err", "m" to (it.message ?: "")) } }
+    }
+    private fun askNotifications() {
+        val sp = getSharedPreferences("conuco_bg", MODE_PRIVATE)
+        if (android.os.Build.VERSION.SDK_INT >= 33 && !sp.getBoolean("asked_notif", false) &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            sp.edit().putBoolean("asked_notif", true).apply()
+            notifPerm.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+    override fun setAlerts(on: Boolean) {
+        Bg.setAlertsOn(this, on); s.alerts = on
+        if (on && android.os.Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+            notifPerm.launch(Manifest.permission.POST_NOTIFICATIONS)
+        log("alerts_toggle", "on" to if (on) "1" else "0")
+    }
+    override fun pinWidget() {
+        val wm = getSystemService(android.appwidget.AppWidgetManager::class.java)
+        if (wm?.isRequestPinAppWidgetSupported == true) { wm.requestPinAppWidget(android.content.ComponentName(this, TodayWidgetReceiver::class.java), null, null); log("widget_pin") }
+        else s.toast = tr("s_widget")
+    }
+    override fun testAlerts() {
+        getSharedPreferences("conuco_bg", MODE_PRIVATE).edit().remove("n_spray").remove("n_fungus").remove("n_seen").apply()
+        Bg.runNow(this); s.toast = tr("s_alerts_test_ok")
+    }
+    /** Android share sheet: the redrawn photo (no EXIF, no GPS) plus a short text any farmer or agronomist can read. */
+    override fun shareDiagnosis(crop: String, d: Ai.Diagnosis) {
+        val text = tr("sh_text", "p" to d.problem.ifBlank { tr("cat_${d.category}") }, "c" to Crops.name(crop, s.lang), "pct" to (d.confidence * 100).toInt(),
+            "src" to tr(if (d.source == "on_device") "sh_device" else "sh_cloud"), "a" to d.actions.take(3).joinToString("; ")).trim()
+        val send = Intent(Intent.ACTION_SEND).putExtra(Intent.EXTRA_TEXT, text).putExtra(Intent.EXTRA_SUBJECT, "Conuco")
+        val bmp = s.photo
+        if (bmp != null) runCatching {
+            val f = File(File(cacheDir, "photos").apply { mkdirs() }, "share.jpg")
+            f.outputStream().use { bmp.compress(android.graphics.Bitmap.CompressFormat.JPEG, 85, it) }
+            send.setType("image/jpeg").putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(this, "com.petiht.conuco.files", f)).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }.onFailure { send.setType("text/plain") } else send.setType("text/plain")
+        startActivity(Intent.createChooser(send, tr("share")))
+        log("share", "content_type" to "diagnosis")
     }
     override fun signOut() { stopWatching(); Firebase.auth.signOut() }
     override fun seedSample() { lifecycleScope.launch { runCatching { repo?.seedSample(); s.toast = tr("saved") } } }

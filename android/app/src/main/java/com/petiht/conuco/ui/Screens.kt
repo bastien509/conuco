@@ -305,6 +305,7 @@ private fun DiagActions(crop: String, d: Ai.Diagnosis, r: Ai.DoctorResult, s: Ap
                 Text(if (saved) tr("saved") else tr("save_log")) }
             OutlinedButton(onClick = { if (!tasked) { tasked = true; a.addTask(d.actions.firstOrNull() ?: d.problem) } }, enabled = !tasked, modifier = Modifier.weight(1f)) { Text(if (tasked) tr("saved") else tr("add_task")) }
         }
+        OutlinedButton(onClick = { a.shareDiagnosis(crop, d) }, modifier = Modifier.fillMaxWidth()) { Icon(Icons.Outlined.Share, null); Spacer(Modifier.width(6.dp)); Text(tr("share")) }
         if (!d.healthy && d.category != "unknown" && s.profile?.shareOutbreaks != false) {
             Button(onClick = { if (!warned) { warned = true; a.warnNeighbours(crop, d) } }, enabled = !warned, modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = c.redSoft, contentColor = c.red)) { Icon(Icons.Outlined.Campaign, null); Spacer(Modifier.width(6.dp)); Text(if (warned) tr("warned") else tr("warn"), fontWeight = FontWeight.Bold) }
@@ -568,6 +569,16 @@ fun SettingsScreen(s: AppState, a: Actions) {
                 a.saveProfile(p.copy(lang = s.lang, crops = crops.toList(), shareOutbreaks = share, areaUnit = unit,
                     place = pl?.let { "${it.name}, ${it.admin}" } ?: p.place, lat = pl?.lat ?: p.lat, lng = pl?.lng ?: p.lng, country = pl?.country ?: p.country))
             }
+        }
+        CCard {
+            Title(tr("s_alerts"), Icons.Outlined.NotificationsActive)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) { Text(tr("s_alerts_on"), fontWeight = FontWeight.Bold); Muted(tr("s_alerts_d"), 13) }
+                Switch(s.alerts, { a.setAlerts(it) }, colors = SwitchDefaults.colors(checkedTrackColor = c.green))
+            }
+            OutlinedButton(onClick = { a.testAlerts() }, enabled = s.alerts) { Icon(Icons.Outlined.NotificationsNone, null); Spacer(Modifier.width(6.dp)); Text(tr("s_alerts_test")) }
+            Muted(tr("s_widget"), 12)
+            TextButton(onClick = { a.pinWidget() }) { Icon(Icons.Outlined.Widgets, null); Spacer(Modifier.width(6.dp)); Text(tr("s_widget_add")) }
         }
         CCard {
             Title(tr("s_ai"), Icons.Outlined.Memory)
