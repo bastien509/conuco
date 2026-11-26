@@ -38,13 +38,6 @@ main > section { padding: 64px max(16px, calc(50vw - 560px)); }
 .stats div { padding: 20px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column; }
 .stats b { font: 800 2rem var(--display); color: var(--green); }
 .stats span { color: var(--muted); }
-.flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; counter-reset: s; }
-@media (max-width: 900px) { .flow { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .flow { grid-template-columns: 1fr; } }
-.step { padding: 20px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); }
-.step .n { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--sun); color: #1f1a00; font-weight: 800; margin-bottom: 10px; }
-.step h3 { font-size: 1.15rem; }
-.step p { color: var(--muted); margin: 0; font-size: .96rem; }
 code { font-size: .86em; background: var(--soft); padding: 1px 5px; border-radius: 6px; }
 .features { background: var(--soft); }
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
@@ -60,3 +53,60 @@ code { font-size: .86em; background: var(--soft); padding: 1px 5px; border-radiu
 .judges li { margin: 8px 0; }
 .foot { padding: 30px max(16px, calc(50vw - 560px)); border-top: 1px solid var(--line); }
 .foot p { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* ---------- How it works: decision flow ---------- */
+:root { --cloud: #0b3a66; --cloud-soft: #e8f0f8; --cloud-line: #b9cfe4; --dev-soft: #eaf4ed; --dev-line: #b7d8c2; }
+@media (prefers-color-scheme: dark) { :root { --cloud: #6ea8de; --cloud-soft: #111c26; --cloud-line: #1e3d5c; --dev-soft: #13231a; --dev-line: #2a5a3c; } }
+.how .lead { margin-bottom: 28px; }
+.pipe { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.node { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 18px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); }
+.node b { font: 700 1.08rem var(--display); }
+.node small { color: var(--muted); font-size: .9rem; line-height: 1.45; }
+.node code, .branch code { font-size: .82em; padding: 1px 5px; border-radius: 6px; background: var(--soft); }
+.node:not(:last-child)::after { content: ""; position: absolute; top: 50%; right: -24px; width: 20px; height: 2px; background: var(--muted); opacity: .5; }
+.node:not(:last-child)::before { content: ""; position: absolute; top: calc(50% - 4px); right: -25px; border: 5px solid transparent; border-left: 6px solid var(--muted); border-right: 0; opacity: .5; }
+.node.nano { border: 1.5px solid var(--green); background: var(--dev-soft); }
+.node.nano b { color: var(--green); }
+.node.gate { border: 1.5px dashed var(--sun); }
+.ico { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--soft); margin-bottom: 6px; }
+.ico svg { width: 22px; height: 22px; fill: none; stroke: var(--green); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.node.gate .ico { background: color-mix(in srgb, var(--sun) 22%, transparent); }
+.node.gate .ico svg { stroke: #b58a00; }
+@media (prefers-color-scheme: dark) { .node.gate .ico svg { stroke: var(--sun); } }
+.ico.sm { width: 34px; height: 34px; border-radius: 10px; margin: 0; flex: none; }
+.ico.sm svg { width: 18px; height: 18px; }
+
+/* the split under the gate */
+.branches { --conn: color-mix(in srgb, var(--muted) 45%, transparent); position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 46px; }
+.branches::before { content: ""; position: absolute; top: -30px; left: 25%; width: 62.5%; border-top: 2px solid var(--conn); }
+.branches::after { content: ""; position: absolute; top: -46px; left: calc(87.5% - 1px); width: 2px; height: 16px; background: var(--conn); }
+.branch::before { content: ""; position: absolute; top: -30px; left: 50%; width: 2px; height: 30px; background: var(--conn); }
+.branch { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 22px; border-radius: 20px; }
+.branch h3 { font-size: 1.3rem; margin: 0; }
+.branch p { margin: 0; color: var(--muted); font-size: .97rem; }
+.branch.yes { background: var(--dev-soft); border: 1px solid var(--dev-line); }
+.branch.no { background: var(--cloud-soft); border: 1px solid var(--cloud-line); }
+.branch .tag { align-self: flex-start; padding: 3px 12px; border-radius: 999px; font-weight: 800; font-size: .82rem; color: #fff; }
+.branch.yes .tag { background: #1f6f3f; } .branch.no .tag { background: #0b3a66; }
+.result { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: auto; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--muted) 20%, transparent); }
+.badge { display: inline-block; padding: 5px 11px; border-radius: 999px; font-size: .78rem; font-weight: 800; color: #fff; }
+.badge.dev { background: #1f6f3f; } .badge.cloud { background: #0b3a66; }
+.res-line { font-size: .95rem; }
+.res-line b { font-weight: 800; }
+
+.around { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 10px; }
+.around > div { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); }
+.around p { margin: 0; color: var(--muted); font-size: .95rem; }
+.around b { color: var(--ink); }
+
+@media (max-width: 900px) {
+  .pipe { grid-template-columns: 1fr 1fr; gap: 14px; }
+  .node::after, .node::before { display: none; }
+  .branches { margin-top: 18px; }
+  .branches::before, .branches::after, .branch::before { display: none; }
+}
+@media (max-width: 600px) {
+  .pipe, .branches, .around { grid-template-columns: 1fr; }
+  .pipe { gap: 22px; }
+  .node:not(:last-child)::after { display: block; top: auto; bottom: -18px; right: auto; left: 28px; width: 2px; height: 14px; }
+}
