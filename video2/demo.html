@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Conuco demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root { --green:#1f6f3f; --green2:#2f8f55; --soft:#e6f2ea; --sun:#f5c518; --ink:#10231a; --muted:#5b6d63; --line:#dfe7e0; --red:#c0392b; --cloud:#0b3a66; --amber:#b45309; }
+* { box-sizing:border-box; margin:0; }
+html,body { width:1920px; height:1080px; overflow:hidden; background:#f7faf6; font-family:Manrope,sans-serif; color:var(--ink); }
+#stage { position:relative; width:1920px; height:1080px; overflow:hidden;
+  background: radial-gradient(1200px 700px at 85% -10%, rgba(245,197,24,.22), transparent 60%), radial-gradient(900px 600px at 0% 110%, rgba(31,111,63,.14), transparent 60%), #f7faf6; }
+.scene { position:absolute; inset:0; opacity:0; will-change:opacity, transform; }
+.abs { position:absolute; }
+.display { font-family:'Bricolage Grotesque',sans-serif; letter-spacing:-.02em; }
+.kicker { font-weight:800; font-size:22px; letter-spacing:.14em; text-transform:uppercase; color:var(--green); }
+.title { font-family:'Bricolage Grotesque'; font-weight:800; font-size:76px; line-height:1.02; letter-spacing:-.025em; }
+.title em { font-style:normal; color:var(--green); }
+.chip { display:inline-flex; align-items:center; gap:10px; padding:12px 20px; border-radius:999px; background:#fff; border:1.5px solid var(--line); font-weight:800; font-size:24px; box-shadow:0 8px 24px rgba(16,35,26,.08); }
+.chip i { width:12px; height:12px; border-radius:50%; background:var(--green); display:inline-block; }
+.badge { display:inline-flex; align-items:center; gap:10px; padding:10px 18px; border-radius:999px; font-weight:800; font-size:22px; color:#fff; background:var(--green); box-shadow:0 10px 24px rgba(16,35,26,.18); }
+.badge.cloud { background:var(--cloud); } .badge.sun { background:var(--sun); color:#1f1a00; } .badge.ink { background:#10231a; }
+/* devices */
+.phone { position:absolute; width:380px; height:770px; padding:12px; border-radius:56px; background:#0f1b15; box-shadow:0 40px 80px rgba(16,35,26,.32), inset 0 0 0 2px #2b3a32; }
+.phone .scr { position:relative; width:100%; height:100%; border-radius:44px; overflow:hidden; background:#f4f7f3; }
+.phone video, .phone img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top; }
+.phone .cam { position:absolute; top:10px; left:50%; width:16px; height:16px; margin-left:-8px; border-radius:50%; background:#0f1b15; z-index:3; }
+.browser { position:absolute; border-radius:22px; background:#fff; box-shadow:0 40px 90px rgba(16,35,26,.25); overflow:hidden; border:1px solid #d9e2db; }
+.browser .bar { height:52px; display:flex; align-items:center; gap:10px; padding:0 18px; background:#eef2ef; border-bottom:1px solid #dbe3dd; }
+.browser .bar b { width:14px; height:14px; border-radius:50%; display:inline-block; }
+.browser .url { margin-left:18px; flex:1; height:32px; border-radius:16px; background:#fff; display:flex; align-items:center; padding:0 16px; font-weight:700; font-size:17px; color:#4a5a51; }
+.browser .view { position:relative; overflow:hidden; background:#fff; }
+.browser video { position:absolute; left:0; top:0; width:100%; height:auto; transform-origin:0 0; }
+.label { position:absolute; font-weight:800; font-size:24px; color:var(--muted); text-align:center; }
+.label b { color:var(--ink); }
+/* cards */
+.card { position:absolute; background:#fff; border-radius:26px; border:1px solid var(--line); box-shadow:0 30px 70px rgba(16,35,26,.14); }
+.code { position:absolute; background:#0f1b15; color:#e3efe6; border-radius:24px; padding:30px 34px; font-family:'JetBrains Mono',monospace; font-size:21px; line-height:1.6; box-shadow:0 30px 70px rgba(16,35,26,.3); white-space:pre; }
+.code .k { color:#f5c518; } .code .s { color:#8fd3a8; } .code .c { color:#7f948a; } .code .h { background:rgba(245,197,24,.18); border-radius:6px; }
+.file { font-family:Manrope; font-weight:800; font-size:16px; letter-spacing:.08em; text-transform:uppercase; color:#8fa69a; margin-bottom:12px; }
+.ring { position:absolute; width:120px; height:120px; margin:-60px 0 0 -60px; border-radius:50%; border:5px solid var(--sun); box-shadow:0 0 0 8px rgba(245,197,24,.25); }
+.callout { position:absolute; padding:14px 22px; border-radius:18px; background:#fff; border:2px solid var(--green); font-weight:800; font-size:26px; box-shadow:0 18px 40px rgba(16,35,26,.16); white-space:nowrap; }
+.callout small { display:block; font-size:19px; color:var(--muted); font-weight:700; }
+.hl { position:absolute; border:4px solid var(--sun); border-radius:14px; box-shadow:0 0 0 9999px rgba(15,27,21,.0); }
+/* captions + chapters */
+#cap { position:absolute; left:50%; bottom:74px; transform:translateX(-50%); max-width:1500px; text-align:center; font-weight:700; font-size:31px; line-height:1.3; color:#fff; background:rgba(15,27,21,.82); padding:12px 26px; border-radius:16px; opacity:0; }
+#chapters { position:absolute; left:120px; right:120px; bottom:28px; display:flex; gap:14px; opacity:0; }
+#chapters .ch { flex:1; }
+#chapters .tr { height:6px; border-radius:6px; background:rgba(16,35,26,.12); overflow:hidden; }
+#chapters .tr i { display:block; height:100%; width:0; background:var(--green); }
+#chapters .nm { margin-top:6px; font-weight:800; font-size:15px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+#fade { position:absolute; inset:0; background:#0f1b15; opacity:0; pointer-events:none; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- S1 logo reveal -->
+<div class="scene" id="s1">
+  <svg class="abs" id="hills" width="1920" height="1080" viewBox="0 0 1920 1080">
+    <defs><radialGradient id="sunG"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#f5c518"/></radialGradient></defs>
+    <circle id="sun" cx="1560" cy="640" r="140" fill="url(#sunG)"/>
+    <path id="h3" d="M0 760 C 300 640, 560 690, 860 640 S 1500 560, 1920 650 L1920 1080 L0 1080Z" fill="#9fcf9f"/>
+    <path id="h2" d="M0 840 C 360 740, 700 800, 1040 750 S 1600 700, 1920 780 L1920 1080 L0 1080Z" fill="#4fa36a"/>
+    <path id="h1" d="M0 930 C 420 850, 820 900, 1180 860 S 1700 830, 1920 880 L1920 1080 L0 1080Z" fill="#1f6f3f"/>
+    <g id="rows" stroke="#16552f" stroke-width="5" opacity=".55" fill="none">
+      <path d="M140 1080 C 300 980, 420 950, 560 930"/><path d="M420 1080 C 560 990, 700 960, 820 935"/><path d="M760 1080 C 860 1000, 980 965, 1080 945"/><path d="M1120 1080 C 1180 1000, 1280 960, 1380 940"/>
+    </g>
+  </svg>
+  <img id="logo" class="abs" src="../web/assets/icon-512.png" width="190" height="190" style="left:865px;top:250px;border-radius:44px;box-shadow:0 30px 60px rgba(16,35,26,.3)">
+  <div id="word" class="abs display" style="left:0;right:0;top:462px;text-align:center;font-weight:800;font-size:130px;letter-spacing:-.03em">Conuco</div>
+  <div id="tag" class="abs" style="left:0;right:0;top:620px;text-align:center;font-weight:700;font-size:34px;color:#2c4136">The field assistant that keeps working <span style="color:var(--green)">where the signal stops.</span></div>
+</div>
+
+<!-- S2 problem -->
+<div class="scene" id="s2">
+  <div class="abs kicker" style="left:160px;top:150px">The problem</div>
+  <div class="abs title" style="left:160px;top:195px;width:1500px">Small farms feed the world.<br><em>Help rarely reaches them.</em></div>
+  <div class="card stat" id="st1" style="left:160px;top:520px;width:500px;height:300px;padding:38px">
+    <div class="display" style="font-weight:800;font-size:96px;color:var(--green)"><span id="n1">0</span>M+</div>
+    <div style="font-weight:700;font-size:28px;color:var(--muted);margin-top:8px">small farms grow about a third of the world's food</div></div>
+  <div class="card stat" id="st2" style="left:710px;top:520px;width:500px;height:300px;padding:38px">
+    <div class="display" style="font-weight:800;font-size:96px;color:var(--red)">20–<span id="n2">0</span>%</div>
+    <div style="font-weight:700;font-size:28px;color:var(--muted);margin-top:8px">of crops lost to pests and diseases every year <span style="font-size:20px">(FAO)</span></div></div>
+  <div class="card stat" id="st3" style="left:1260px;top:520px;width:500px;height:300px;padding:38px">
+    <svg width="150" height="96" viewBox="0 0 150 96" style="display:block">
+      <rect class="bar" x="0" y="66" width="26" height="30" rx="5" fill="#10231a"/><rect class="bar" x="40" y="44" width="26" height="52" rx="5" fill="#10231a"/>
+      <rect class="bar" x="80" y="22" width="26" height="74" rx="5" fill="#10231a"/><rect class="bar" x="120" y="0" width="26" height="96" rx="5" fill="#10231a"/>
+      <line id="slash" x1="0" y1="96" x2="150" y2="0" stroke="#c0392b" stroke-width="10" stroke-linecap="round" stroke-dasharray="180" stroke-dashoffset="180"/></svg>
+    <div style="font-weight:700;font-size:28px;color:var(--muted);margin-top:14px">in the hills the signal drops, and the agronomist is far away</div></div>
+</div>
+
+<!-- S3 meet -->
+<div class="scene" id="s3">
+  <div class="abs kicker" id="s3k" style="left:0;right:0;top:70px;text-align:center">Meet Conuco</div>
+  <div class="abs title" id="s3t" style="left:0;right:0;top:110px;text-align:center;font-size:62px">One assistant. <em>Web and Android.</em></div>
+  <div class="browser" id="s3b" style="left:110px;top:250px;width:1180px">
+    <div class="bar"><b style="background:#ff6b5f"></b><b style="background:#f5c518"></b><b style="background:#3cc161"></b><div class="url">petiht.com/conuco/app.html</div></div>
+    <div class="view" style="height:564px"><video id="v3b" src="px/w_today.mp4" muted preload="auto" style="width:1180px"></video></div></div>
+  <div class="label" id="s3bl" style="left:110px;width:1180px;top:890px"><b>Web app</b> · Chrome on a laptop</div>
+  <div class="phone" id="s3p" style="left:1400px;top:205px"><div class="scr"><video id="v3p" src="px/today.mp4" muted preload="auto"></video></div><i class="cam"></i></div>
+  <div class="label" id="s3pl" style="left:1380px;width:420px;top:990px"><b>Android</b> · native app</div>
+</div>
+
+<!-- S4 dashboard -->
+<div class="scene" id="s4">
+  <div class="phone" id="s4p" style="left:770px;top:110px;transform-origin:50% 0"><div class="scr"><video id="v4p" src="px/today.mp4" muted preload="auto"></video></div><i class="cam"></i></div>
+  <div class="callout" id="c41" style="left:250px;top:250px">Today's decision<small>spray window from the forecast</small></div>
+  <div class="callout" id="c42" style="left:1250px;top:420px">Water · Fungus · Nearby<small>FAO-56 water balance, leaf wetness</small></div>
+  <div class="callout" id="c43" style="left:280px;top:600px;border-color:var(--red)">Outbreak alerts<small>neighbours' reports within 30 km</small></div>
+</div>
+
+<!-- S5 firebase -->
+<div class="scene" id="s5">
+  <div class="abs kicker" id="s5k" style="left:120px;top:70px">02 · Under the hood</div>
+  <div class="abs title" id="s5t" style="left:120px;top:110px;font-size:66px">Built on <em>Firebase</em></div>
+  <div class="abs" id="s5chips" style="left:120px;top:230px;display:flex;gap:14px;flex-wrap:wrap;width:1700px">
+    <span class="chip"><i></i>Firebase AI Logic</span><span class="chip"><i style="background:var(--sun)"></i>Gemini Nano</span><span class="chip"><i style="background:var(--cloud)"></i>Gemini (cloud)</span>
+    <span class="chip"><i style="background:#6b4a2b"></i>Remote Config</span><span class="chip"><i style="background:#2f8f55"></i>Authentication</span><span class="chip"><i style="background:#b45309"></i>Firestore</span><span class="chip"><i style="background:#10231a"></i>App Check</span></div>
+  <!-- b: AI Logic -->
+  <div class="code" id="s5code" style="left:120px;top:340px;width:880px"><div class="file">android · Ai.kt</div>Firebase.ai(backend = GenerativeBackend.googleAI())
+  .generativeModel(
+    modelName = cloudModel,  <span class="c">// from Remote Config</span>
+    <span class="h">onDeviceConfig = OnDeviceConfig(mode = mode)</span>)
+
+<span class="c">// Nano first, on the phone</span>
+run(<span class="k">InferenceMode.ONLY_ON_DEVICE</span>) { image(photo) }
+<span class="c">// only after the farmer says yes</span>
+run(<span class="k">InferenceMode.ONLY_IN_CLOUD</span>) { image(photo) }</div>
+  <div class="browser" id="s5b1" style="left:1040px;top:360px;width:780px">
+    <div class="bar"><b style="background:#ff6b5f"></b><b style="background:#f5c518"></b><b style="background:#3cc161"></b><div class="url">Firebase AI Logic · conuco-farm</div></div>
+    <div class="view" style="height:420px"><video id="v5a" src="px/fb_ailogic.mp4" muted preload="auto" style="width:1500px;left:-300px;top:-200px"></video>
+      <div class="hl" id="hl5a" style="left:430px;top:105px;width:200px;height:100px"></div></div></div>
+  <!-- c: Remote Config -->
+  <div class="card" id="s5rc" style="left:120px;top:340px;width:1680px;height:520px;padding:40px 48px">
+    <div class="file" style="color:var(--muted)">Remote Config · live, no app update</div>
+    <div id="rcrows" style="display:grid;grid-template-columns:1fr 1fr;gap:18px 30px;margin-top:10px">
+      <div class="rc"><code>conuco_confidence_floor</code><b>0.65</b><small>below this, suggest a cloud second opinion</small></div>
+      <div class="rc"><code>conuco_cloud_model</code><b>gemini-3.5-flash-lite</b><small>model used for the cloud fallback</small></div>
+      <div class="rc"><code>conuco_cloud_photos_allowed</code><b>true</b><small>kill switch for photos to the cloud</small></div>
+      <div class="rc"><code>conuco_spray_max_wind_kmh</code><b>15</b><small>safe spray window threshold</small></div>
+      <div class="rc"><code>conuco_outbreak_radius_km</code><b>30</b><small>alert radius for neighbour reports</small></div>
+      <div class="rc"><code>conuco_grounding_enabled</code><b>true</b><small>fresh answers with Google Search</small></div>
+    </div></div>
+  <!-- d: Auth + Firestore -->
+  <div class="browser" id="s5b2" style="left:120px;top:350px;width:820px">
+    <div class="bar"><b style="background:#ff6b5f"></b><b style="background:#f5c518"></b><b style="background:#3cc161"></b><div class="url">Authentication · sign-in providers</div></div>
+    <div class="view" style="height:440px"><video id="v5b" src="px/fb_auth.mp4" muted preload="auto" style="width:1300px;left:-330px;top:-100px"></video></div></div>
+  <div class="browser" id="s5b3" style="left:980px;top:350px;width:820px">
+    <div class="bar"><b style="background:#ff6b5f"></b><b style="background:#f5c518"></b><b style="background:#3cc161"></b><div class="url">Firestore · shared outbreak reports</div></div>
+    <div class="view" style="height:440px"><video id="v5c" src="px/fb_firestore.mp4" muted preload="auto" style="width:1300px;left:-440px;top:-250px"></video></div></div>
+  <div class="label" id="s5l1" style="left:120px;width:820px;top:860px">Anonymous or email accounts · each farm log is private</div>
+  <div class="label" id="s5l2" style="left:980px;width:820px;top:860px">Offline-first · shared reports carry only a crop, a problem and an 11 km cell</div>
+  <!-- e: App Check -->
+  <div class="browser" id="s5b4" style="left:120px;top:340px;width:1100px">
+    <div class="bar"><b style="background:#ff6b5f"></b><b style="background:#f5c518"></b><b style="background:#3cc161"></b><div class="url">App Check · conuco-farm</div></div>
+    <div class="view" style="height:540px"><video id="v5d" src="px/fb_appcheck.mp4" muted preload="auto" style="width:1700px;left:-300px;top:-380px"></video>
+      <div class="hl" id="hl5d" style="left:230px;top:80px;width:840px;height:64px"></div></div></div>
+  <div class="abs" id="s5badges" style="left:1280px;top:400px;display:flex;flex-direction:column;gap:20px;width:540px">
+    <div class="display" style="font-weight:800;font-size:46px;line-height:1.05">Every AI call is <span style="color:var(--green)">verified</span></div>
+    <span class="badge ink" style="align-self:flex-start">Android · Play Integrity</span>
+    <span class="badge ink" style="align-self:flex-start">Web · reCAPTCHA Enterprise</span>
+    <span class="badge" style="align-self:flex-start">Firebase AI Logic · Enforced</span></div>
+</div>
+
+<!-- S6 camera -->
+<div class="scene" id="s6">
+  <div class="abs kicker" style="left:160px;top:250px">03 · Live demo</div>
+  <div class="abs title" style="left:160px;top:295px;width:820px;font-size:72px">The <em>crop doctor</em></div>
+  <div class="abs" id="s6txt" style="left:160px;top:480px;width:760px;font-weight:700;font-size:32px;line-height:1.45;color:#2c4136">The big camera button opens a <b style="color:var(--green)">leaf camera</b> (CameraX): a frame for one leaf, plus live checks for <b>blur</b> and <b>light</b> before the shot.</div>
+  <div class="abs" id="s6chips" style="left:160px;top:700px;display:flex;gap:14px"><span class="badge">Sharp ✓</span><span class="badge sun">Low light</span><span class="badge ink">Photo stays on the phone</span></div>
+  <div class="phone" id="s6p" style="left:1220px;top:150px"><div class="scr"><video id="v6p" src="px/cloud.mp4" muted preload="auto"></video>
+    <div class="ring" id="r6a" style="left:23.5%;top:41%"></div><div class="ring" id="r6b" style="left:50%;top:91%"></div></div><i class="cam"></i></div>
+</div>
+
+<!-- S7 nano on the web -->
+<div class="scene" id="s7">
+  <div class="browser" id="s7b" style="left:80px;top:90px;width:1300px">
+    <div class="bar"><b style="background:#ff6b5f"></b><b style="background:#f5c518"></b><b style="background:#3cc161"></b><div class="url">petiht.com/conuco/app.html · Chrome with Gemini Nano</div></div>
+    <div class="view" style="height:690px"><video id="v7" src="px/w_doctor.mp4" muted preload="auto" style="width:1755px;left:-227px"></video>
+      <div class="hl" id="hl7" style="left:300px;top:318px;width:640px;height:130px"></div></div></div>
+  <div class="abs" id="s7side" style="left:1430px;top:150px;width:420px;display:flex;flex-direction:column;gap:22px">
+    <div class="kicker">On this laptop</div>
+    <div class="display" style="font-weight:800;font-size:52px;line-height:1.02">Gemini Nano<br>in <span style="color:var(--green)">Chrome</span></div>
+    <div id="s7a" style="font-weight:700;font-size:26px;color:#2c4136">1 · Photo redrawn: GPS and camera data removed</div>
+    <div id="s7b2" style="font-weight:700;font-size:26px;color:#2c4136">2 · Private mode → <b>ONLY_ON_DEVICE</b></div>
+    <div id="s7c" style="font-weight:700;font-size:26px;color:#2c4136">3 · Structured diagnosis with an honest confidence</div>
+    <span class="badge" id="s7badge" style="align-self:flex-start">On this device · photo never left</span></div>
+  <div class="abs" id="s7speed" style="left:430px;top:470px"><span class="badge ink" style="font-size:26px;padding:14px 24px">⏩ Gemini Nano thinking on this laptop · 38 s · shown 9× faster</span></div>
+</div>
+
+<!-- S8 cloud on android -->
+<div class="scene" id="s8">
+  <div class="phone" id="s8p" style="left:300px;top:150px"><div class="scr"><video id="v8p" src="px/cloud.mp4" muted preload="auto"></video></div><i class="cam"></i></div>
+  <div class="abs" id="s8side" style="left:820px;top:230px;width:960px;display:flex;flex-direction:column;gap:26px">
+    <div class="kicker">No Nano on this phone</div>
+    <div class="display" style="font-weight:800;font-size:68px;line-height:1.02">The cloud, <span style="color:var(--cloud)">only with consent</span></div>
+    <div id="s8a" style="font-weight:700;font-size:30px;color:#2c4136">Conuco asks before the photo leaves the phone.</div>
+    <div id="s8b" style="font-weight:700;font-size:30px;color:#2c4136">Then <b>ONLY_IN_CLOUD</b> Gemini, verified by App Check.</div>
+    <div id="s8c" style="display:flex;gap:14px"><span class="badge cloud">Cloud · with consent · 5.5 s</span><span class="badge ink">real time</span></div></div>
+</div>
+
+<!-- S9 actions -->
+<div class="scene" id="s9">
+  <div class="phone" id="s9p" style="left:1240px;top:150px"><div class="scr"><video id="v9a" src="px/act.mp4" muted preload="auto"></video><video id="v9b" src="px/map.mp4" muted preload="auto" style="opacity:0"></video><video id="v9c" src="px/today.mp4" muted preload="auto" style="opacity:0"></video></div><i class="cam"></i></div>
+  <div class="abs kicker" style="left:160px;top:230px">From diagnosis to action</div>
+  <div class="abs" id="s9list" style="left:160px;top:290px;width:960px;display:flex;flex-direction:column;gap:22px">
+    <div class="step9" id="a1"><span>1</span><div><b>Every step becomes a task</b> with one tap</div></div>
+    <div class="step9" id="a2"><span>2</span><div><b>Safe advice only</b>: no pesticide doses, see an extension officer</div></div>
+    <div class="step9" id="a3"><span>3</span><div><b>Share</b> the photo (no location) and the advice</div></div>
+    <div class="step9" id="a4"><span>4</span><div><b>Warn the neighbours</b>: an 11 km area on the map, never a farm</div></div>
+    <div class="step9" id="a5"><span>5</span><div><b>Today</b> turns it all into one clear decision</div></div>
+  </div>
+</div>
+
+<!-- S10 montage -->
+<div class="scene" id="s10">
+  <div class="abs kicker" style="left:0;right:0;top:70px;text-align:center">Also in Conuco</div>
+  <div class="browser" id="s10b" style="left:90px;top:200px;width:900px">
+    <div class="bar"><b style="background:#ff6b5f"></b><b style="background:#f5c518"></b><b style="background:#3cc161"></b><div class="url">Gemini Nano explains the day</div></div>
+    <div class="view" style="height:560px"><video id="v10a" src="px/w_today.mp4" muted preload="auto" style="width:1500px;left:-300px;top:-260px"></video></div></div>
+  <div class="label" id="s10l1" style="left:90px;width:900px;top:830px"><b>Daily brief</b> · on this device</div>
+  <div class="phone" id="s10p1" style="left:1060px;top:170px;transform:scale(.86);transform-origin:0 0"><div class="scr"><video id="v10b" src="px/market.mp4" muted preload="auto"></video></div><i class="cam"></i></div>
+  <div class="label" id="s10l2" style="left:1040px;width:370px;top:850px"><b>Market prices</b> · median, trend</div>
+  <div class="phone" id="s10p2" style="left:1460px;top:170px;transform:scale(.86);transform-origin:0 0"><div class="scr"><video id="v10c" src="px/farm.mp4" muted preload="auto"></video></div><i class="cam"></i></div>
+  <div class="label" id="s10l3" style="left:1440px;width:370px;top:850px"><b>Farm log</b> · profit, harvest rings</div>
+</div>
+
+<!-- S11 close -->
+<div class="scene" id="s11">
+  <div class="browser" id="s11b" style="left:200px;top:210px;width:1000px">
+    <div class="bar"><b style="background:#ff6b5f"></b><b style="background:#f5c518"></b><b style="background:#3cc161"></b><div class="url">petiht.com/conuco/app.html</div></div>
+    <div class="view" style="height:478px"><video id="v11a" src="px/w_today.mp4" muted preload="auto" style="width:1000px"></video></div></div>
+  <div class="phone" id="s11p" style="left:1280px;top:150px"><div class="scr"><video id="v11b" src="px/today.mp4" muted preload="auto"></video></div><i class="cam"></i></div>
+  <div class="abs" id="s11end" style="left:0;right:0;top:230px;text-align:center">
+    <img src="../web/assets/icon-512.png" width="150" height="150" style="border-radius:36px;box-shadow:0 26px 50px rgba(16,35,26,.28)">
+    <div class="display" style="font-weight:800;font-size:120px;letter-spacing:-.03em;margin-top:18px">Conuco</div>
+    <div style="font-weight:700;font-size:38px;color:#2c4136;margin-top:6px">The device first. <span style="color:var(--green)">The cloud only with consent.</span></div>
+    <div style="margin-top:34px;display:inline-flex;gap:16px"><span class="badge" style="font-size:28px;padding:14px 26px">petiht.com/conuco</span><span class="badge ink" style="font-size:28px;padding:14px 26px">Android APK + web</span></div>
+    <div style="margin-top:28px;font-weight:800;font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Firebase AI Logic · Gemini Nano · #BuildHybridAI</div></div>
+</div>
+
+<div id="cap"></div>
+<div id="chapters"><div class="ch"><div class="tr"><i></i></div><div class="nm">Intro</div></div><div class="ch"><div class="tr"><i></i></div><div class="nm">Firebase</div></div><div class="ch"><div class="tr"><i></i></div><div class="nm">Live demo</div></div><div class="ch"><div class="tr"><i></i></div><div class="nm">Wrap-up</div></div></div>
+<div id="fade"></div>
+</div>
+<style>
+.rc { padding:18px 22px; border-radius:18px; background:#f4f8f5; border:1px solid var(--line); display:grid; grid-template-columns:1fr auto; gap:4px 16px; }
+.rc code { font-family:'JetBrains Mono'; font-weight:700; font-size:22px; color:#10231a; }
+.rc b { font-family:'JetBrains Mono'; font-size:22px; color:var(--green); text-align:right; }
+.rc small { grid-column:1/-1; font-size:19px; font-weight:600; color:var(--muted); }
+.step9 { font-weight:600; font-size:31px; color:#2c4136; display:flex; gap:18px; align-items:center; padding:18px 24px; border-radius:20px; background:#fff; border:1.5px solid var(--line); box-shadow:0 12px 30px rgba(16,35,26,.07); }
+.step9 b { color:var(--ink); font-weight:800; }
+.step9 span { flex:none; width:46px; height:46px; border-radius:50%; display:grid; place-items:center; background:var(--sun); color:#1f1a00; font-weight:800; font-size:24px; }
+.step9.on { border-color:var(--green); background:var(--soft); }
+</style>
+<script src="timeline.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+1
+00:00:01,500 --> 00:00:07,168
+In the hills of the Dominican Republic, small farms grow much of the country's food.
+
+2
+00:00:07,168 --> 00:00:11,554
+But pests and diseases can take up to forty percent of a harvest,
+
+3
+00:00:11,554 --> 00:00:14,590
+and where the signal stops, help is far away.
+
+4
+00:00:15,800 --> 00:00:19,110
+Meet Conuco: a field assistant for those farmers,
+
+5
+00:00:19,110 --> 00:00:22,421
+on the web in Chrome and as a native Android app.
+
+6
+00:00:22,421 --> 00:00:27,690
+It turns the weather into clear daily decisions, and it keeps working offline.
+
+7
+00:00:31,400 --> 00:00:33,330
+Conuco is built on Firebase.
+
+8
+00:00:33,330 --> 00:00:38,362
+Firebase AI Logic runs hybrid inference: Gemini Nano on the device first,
+
+9
+00:00:38,362 --> 00:00:41,326
+and Gemini in the cloud only when it helps.
+
+10
+00:00:41,326 --> 00:00:45,600
+Remote Config tunes the confidence floor and the models, live.
+
+11
+00:00:45,600 --> 00:00:50,770
+Authentication and Firestore keep every farm log private and offline-first.
+
+12
+00:00:50,770 --> 00:00:56,560
+And App Check, with Play Integrity and reCAPTCHA Enterprise, protects every AI call.
+
+13
+00:01:01,600 --> 00:01:06,860
+Now, the crop doctor. On Android, the big camera button opens a leaf camera,
+
+14
+00:01:06,860 --> 00:01:12,050
+with a frame and live checks for blur and light, before the photo is taken.
+
+15
+00:01:13,000 --> 00:01:18,456
+On a laptop with Gemini Nano, Chrome runs the diagnosis right on the device.
+
+16
+00:01:18,456 --> 00:01:23,122
+The photo is redrawn first, so location and camera data are gone.
+
+17
+00:01:23,122 --> 00:01:28,650
+Nano answers with an honest confidence. On this device, the photo never left.
+
+18
+00:01:31,400 --> 00:01:36,798
+This phone has no Gemini Nano, so Conuco asks before anything leaves.
+
+19
+00:01:36,798 --> 00:01:40,788
+With a yes, Gemini in the cloud answers in seconds:
+
+20
+00:01:40,788 --> 00:01:44,230
+Black Sigatoka, severe, ninety-five percent.
+
+21
+00:01:46,600 --> 00:01:49,363
+Every step becomes a task with one tap.
+
+22
+00:01:49,363 --> 00:01:56,024
+The advice is filtered: no pesticide doses, and a reminder to check with an extension officer.
+
+23
+00:01:56,024 --> 00:02:03,748
+One tap warns the neighbours: the report lands on the outbreak map as an eleven-kilometre area, never a farm.
+
+24
+00:02:03,748 --> 00:02:08,070
+And each morning, Today turns it all into one clear decision.
+
+25
+00:02:28,000 --> 00:02:34,313
+Conuco. The device first, the cloud only with consent, on the web and on Android.
+
+26
+00:02:34,313 --> 00:02:38,990
+Built with Firebase, for the farmers where the signal stops.
+
+27
+00:02:38,990 --> 00:02:41,640
+Try it today at petiht.com/conuco.
+
