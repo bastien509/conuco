@@ -1,0 +1,57 @@
+[
+ {
+  "id": "i1_intro",
+  "part": "intro",
+  "text": "This is Conuco, a free field assistant for small farmers in the Dominican Republic. Pests and diseases can destroy up to forty percent of a harvest, and in the hills there's often no signal and no agronomist. Conuco reads a sick leaf with Gemini Nano on the phone, turns the weather into daily decisions, and keeps working offline."
+ },
+ {
+  "id": "d1_alert",
+  "part": "day",
+  "text": "Rosa's phone buzzes. Every few hours, even offline, Conuco checks the forecast and her neighbours' reports, and sends alerts: Black Sigatoka nearby, high fungus risk, and the next safe spray window."
+ },
+ {
+  "id": "d2_today",
+  "part": "day",
+  "text": "Today turns it into one decision: not now, spray Saturday morning. Water today, and watch for fungus."
+ },
+ {
+  "id": "d3_doctor",
+  "part": "day",
+  "text": "In the field, she checks a sick banana leaf. This phone has no Gemini Nano, so Conuco asks before the photo leaves. Seconds later: Black Sigatoka, severe, with safe steps and no pesticide doses."
+ },
+ {
+  "id": "d4_act",
+  "part": "day",
+  "text": "One tap adds a step to her tasks. One tap warns her neighbours on the outbreak map, as an eleven-kilometre area, never her farm."
+ },
+ {
+  "id": "d5_market",
+  "part": "day",
+  "text": "At the market, she checks what buyers pay this week, and who pays best."
+ },
+ {
+  "id": "d6_ask",
+  "part": "day",
+  "text": "At noon, she asks Conuco a question, by voice or by text."
+ },
+ {
+  "id": "d7_farm",
+  "part": "day",
+  "text": "In the evening, she logs the day by voice. Her farm log shows the month's profit, and how close each plot is to harvest."
+ },
+ {
+  "id": "d8_settings",
+  "part": "day",
+  "text": "Alerts, language and on-device AI are all in settings."
+ },
+ {
+  "id": "f1_firebase",
+  "part": "firebase",
+  "text": "Under the hood, Conuco is built on Firebase. Firebase AI Logic routes every request: Gemini Nano on the device first, Gemini in the cloud only with consent. Remote Config tunes the thresholds live. Authentication and Firestore keep each farm log private and offline-first. App Check verifies every AI call, and Crashlytics and Performance watch every release."
+ },
+ {
+  "id": "c1_close",
+  "part": "close",
+  "text": "Conuco. The device first, the cloud only with consent. Built for the farmers where the signal stops. Try it at petiht dot com slash conuco."
+ }
+]

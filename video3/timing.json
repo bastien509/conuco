@@ -1,0 +1,160 @@
+{
+ "cues": [
+  [
+   0.8,
+   6.179,
+   "This is Conuco, a free field assistant for small farmers in the Dominican Republic."
+  ],
+  [
+   6.179,
+   14.214,
+   "Pests and diseases can destroy up to forty percent of a harvest, and in the hills there's often no signal and no agronomist."
+  ],
+  [
+   14.214,
+   22.12,
+   "Conuco reads a sick leaf with Gemini Nano on the phone, turns the weather into daily decisions, and keeps working offline."
+  ],
+  [
+   24,
+   25.324,
+   "Rosa's phone buzzes."
+  ],
+  [
+   25.324,
+   31.02,
+   "Every few hours, even offline, Conuco checks the forecast and her neighbours' reports,"
+  ],
+  [
+   31.02,
+   36.98,
+   "and sends alerts: Black Sigatoka nearby, high fungus risk, and the next safe spray window."
+  ],
+  [
+   37.3,
+   41.953,
+   "Today turns it into one decision: not now, spray Saturday morning."
+  ],
+  [
+   41.953,
+   44.35,
+   "Water today, and watch for fungus."
+  ],
+  [
+   44.65,
+   47.67,
+   "In the field, she checks a sick banana leaf."
+  ],
+  [
+   47.67,
+   52.476,
+   "This phone has no Gemini Nano, so Conuco asks before the photo leaves."
+  ],
+  [
+   52.476,
+   57.83,
+   "Seconds later: Black Sigatoka, severe, with safe steps and no pesticide doses."
+  ],
+  [
+   58.85,
+   62.650000000000006,
+   "On a laptop with Gemini Nano, Chrome runs the same diagnosis right on the device."
+  ],
+  [
+   62.650000000000006,
+   70.15,
+   "Black Sigatoka again, with an honest confidence, and the photo never left."
+  ],
+  [
+   71.7,
+   73.867,
+   "One tap adds a step to her tasks."
+  ],
+  [
+   73.867,
+   80.03999999999999,
+   "One tap warns her neighbours on the outbreak map, as an eleven-kilometre area, never her farm."
+  ],
+  [
+   80.3,
+   84.61,
+   "At the market, she checks what buyers pay this week, and who pays best."
+  ],
+  [
+   84.89999999999999,
+   89.3,
+   "At noon, she asks Conuco a question, by voice or by text."
+  ],
+  [
+   89.6,
+   92.13799999999999,
+   "In the evening, she logs the day by voice."
+  ],
+  [
+   92.13799999999999,
+   96.78999999999999,
+   "Her farm log shows the month's profit, and how close each plot is to harvest."
+  ],
+  [
+   97.1,
+   101.27,
+   "Alerts, language and on-device AI are all in settings."
+  ],
+  [
+   102.19999999999999,
+   105.389,
+   "Under the hood, Conuco is built on Firebase."
+  ],
+  [
+   105.389,
+   113.434,
+   "Firebase AI Logic routes every request: Gemini Nano on the device first, Gemini in the cloud only with consent."
+  ],
+  [
+   113.434,
+   116.333,
+   "Remote Config tunes the thresholds live."
+  ],
+  [
+   116.333,
+   121.69699999999999,
+   "Authentication and Firestore keep each farm log private and offline-first."
+  ],
+  [
+   121.69699999999999,
+   127.92999999999999,
+   "App Check verifies every AI call, and Crashlytics and Performance watch every release."
+  ],
+  [
+   128.8,
+   133.27700000000002,
+   "Conuco. The device first, the cloud only with consent."
+  ],
+  [
+   133.27700000000002,
+   137.008,
+   "Built for the farmers where the signal stops."
+  ],
+  [
+   137.008,
+   139.33,
+   "Try it at petiht.com/conuco."
+  ]
+ ],
+ "clicks": [
+  32.35,
+  44.844,
+  47.688,
+  48.81,
+  51.926,
+  59.45,
+  61.7,
+  73.01,
+  76.57,
+  81.18,
+  85.73,
+  90.06,
+  93.46,
+  97.59
+ ]
+}
